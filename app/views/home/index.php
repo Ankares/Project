@@ -8,5 +8,6 @@
 </head>
 <body>
     <h1>hey</h1>
+    <a href="/user">link</a>
 </body>
 </html>

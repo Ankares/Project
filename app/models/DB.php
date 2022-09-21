@@ -1,15 +1,11 @@
 <?php
-
-$env = $_ENV['DB_USER'];
-echo $env;
-
     class DB {
 
         private static $_db = null;
   
         public static function getInstence() {
           if(self::$_db == null) {
-              self::$_db = new PDO('mysql:host=localhost; dbname=users', 'testUser', 'testPassword');
+              self::$_db = new PDO('mysql:host=127.0.0.1;port=8889;dbname=users', 'user', 'pass');
           }
           return self::$_db;
         }

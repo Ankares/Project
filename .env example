@@ -1,0 +1,5 @@
+
+DB_NAME=users
+DB_USER=user
+DB_PASSWORD=pass
+DB_ROOT_PASSWORD=root

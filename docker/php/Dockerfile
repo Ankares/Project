@@ -1,5 +1,5 @@
 FROM php:8.0.1-apache
-
+RUN a2enmod rewrite 
 RUN apt-get update
 
 # Install tools required for build stage
