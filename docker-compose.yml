@@ -5,20 +5,20 @@ services:
   php:
     build: docker/php
     ports:
-    - $BASE_URL:80:80
+    - 80:80
     volumes:
     - ./:/var/www/html
-
+    - ./app:/var/www///app/
 
   mysql:
     image: mysql:latest
     ports:
-    - $BASE_URL:3306:3306
+    - 3306:3306
     environment:
-      MYSQL_ROOT_PASSWORD: $DB_ROOT_PASSWORD
-      MYSQL_DATABASE: $DB_NAME
-      MYSQL_USER: $DB_USER
-      MYSQL_PASSWORD: $DB_PASSWORD
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
     volumes:
       - ./databases/mysql:/var/lib/mysql
 
@@ -26,4 +26,4 @@ services:
     image: adminer:latest
     restart: always
     ports: 
-    - $BASE_URL:8080:8080
+    - 8080:8080
