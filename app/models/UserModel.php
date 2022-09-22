@@ -50,15 +50,24 @@ class UserModel
         $query->execute(['email'=>$this->email, 'name'=>$this->name, 'surname'=>$this->surname, 'gender'=>$this->gender, 'status'=>$this->status]);
     }
 
+    public function checkUser($email)
+    {
+        $sql = $this->db->query("SELECT * FROM users WHERE email = '$email'");
+        $user = $sql->fetch(PDO::FETCH_ASSOC);
+        if(isset($user['email'])) {
+            return 'User is already exist';
+        }
+    }
+
     public function getUsers()
     {
         $sql = $this->db->query("SELECT * FROM users");
         return $sql->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function deleteUser($email)
+    public function deleteUser($id)
     {
-        $this->db->query("DELETE FROM users WHERE email = $email");
+        $this->db->query("DELETE FROM users WHERE id = '$id'");
     }
 
 }
