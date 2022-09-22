@@ -1,13 +1,13 @@
 <?php
     class DB {
 
-        private static $_db = null;
+        private static $db = null;
   
         public static function getInstence() {
-          if(self::$_db == null) {
-              self::$_db = new PDO('mysql:host=127.0.0.1;port=8889;dbname=users', 'user', 'pass');
+          if(self::$db == null) {
+              self::$db = new PDO('mysql:host=mysql;dbname=project', 'artem', 'password');
           }
-          return self::$_db;
+          return self::$db;
         }
   
         public function __construct() {}
