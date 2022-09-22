@@ -1,30 +1,64 @@
 <?php
-  require 'DB.php';
 
-  class UserModel {
-    
+require 'DB.php';
+
+class UserModel
+{
+
     private $name;
+    private $surname;
     private $email;
-    private $pass;
-    private $re_pass;
+    private $gender;
+    private $status;
 
-    private $db = null;                
+    private $db = null;
 
-    public function __construct(){     
-      $this->db = DB::getInstence();
+    public function __construct()
+    {
+        $this->db = DB::getInstence();
     }
 
-    public function setData($name,$email,$pass,$re_pass) {
-      $this->name = $name;
-      $this->email = $email;
-      $this->pass = $pass;
-      $this->re_pass = $re_pass;
+    public function setData($email, $name, $surname, $gender, $status)
+    {
+        $this->email = $email;
+        $this->name = $name;
+        $this->surname = $surname;
+        $this->gender = $gender;
+        $this->status = $status;
     }
 
-    public function addUser() {
-      $sql = 'INSERT INTO users(name,email,password) VALUES(:name,:email,:password)';
-      $query = $this->db->prepare($sql);
-      $passHash = password_hash($this->pass, PASSWORD_DEFAULT);
-      $query->execute(['name'=>$this->name, 'email'=>$this->email, 'password'=>$passHash]);
+    public function validation() 
+    {
+        if(!preg_match("/^[a-zA-Z0-9_\-.]+@[a-zA-Z0-9\-]+\.(ru|com)/", $this->email))
+            return 'Email is incorrect. Please try again';
+        if(!preg_match("/^[a-zA-Z]{2,15}$/i", $this->name))
+            return 'Name is incorrect. Please try again';
+        if(!preg_match("/^[a-zA-Z]{2,15}$/i", $this->surname))
+            return 'Surname is incorrect. Please try again';
+        if(!isset($this->gender))
+            return 'Please select your gender';
+        if(!isset($this->status))
+            return 'Please select your status';
+        
+        return 'Correct data';
     }
-  }
+
+    public function addUser()
+    {
+        $sql = 'INSERT INTO users(email, name, surname, gender, status) VALUES(:email, :name, :surname, :gender, :status)';
+        $query = $this->db->prepare($sql);
+        $query->execute(['email'=>$this->email, 'name'=>$this->name, 'surname'=>$this->surname, 'gender'=>$this->gender, 'status'=>$this->status]);
+    }
+
+    public function getUsers()
+    {
+        $sql = $this->db->query("SELECT * FROM users");
+        return $sql->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function deleteUser($email)
+    {
+        $this->db->query("DELETE FROM users WHERE email = $email");
+    }
+
+}
