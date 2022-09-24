@@ -65,6 +65,19 @@ class UserModel
         return $sql->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function getUser($id)
+    {
+        $sql = $this->db->query("SELECT * FROM users WHERE id = '$id'");
+        return $sql->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function updateUser($id, $email, $name, $surname, $gender, $status)
+    {
+        $sql = "UPDATE users SET email = :email, name = :name, surname = :surname, gender = :gender, status = :status WHERE id = :id";
+        $query = $this->db->prepare($sql);
+        $query->execute(['email'=>$email, 'name'=>$name, 'surname'=>$surname, 'gender'=>$gender, 'status'=>$status, 'id'=>$id]);
+    }
+
     public function deleteUser($id)
     {
         $this->db->query("DELETE FROM users WHERE id = '$id'");
