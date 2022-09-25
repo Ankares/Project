@@ -19,6 +19,7 @@ class User extends Controller
             } else {
                 if($valid == 'Correct data') {
                     $user->addUser();
+                    $data['success'] = 'User successfully added';
                 } else {
                     $data['error'] = $valid;
                 }
@@ -30,23 +31,44 @@ class User extends Controller
     public function list()
     {
         $users = $this->model('UserModel');
-        
-        if(isset($_POST['id'])) {
-            $oneUser = $users->getUser($_POST['id']);
-            if($_POST['email'] != $oneUser['email'] || $_POST['name'] != $oneUser['name'] || $_POST['surname'] != $oneUser['surname'] || $_POST['gender'] != $oneUser['gender'] || $_POST['status'] != $oneUser['status']) {
-                $users->updateUser($_POST['id'], $_POST['email'], $_POST['name'], $_POST['surname'], $_POST['gender'], $_POST['status']);    
-            } else {
-                $data['message'] = 'You should change something to save the result';
-            }
-        } 
+        $data['users'] = $users->getUsers();
 
+        $this->view('user/list', $data);
+    }
+
+    public function edit($id)
+    {
+        $users = $this->model('UserModel');
+        $currUser = $users->getUser($id);
+
+        if(isset($_POST['id'])) {
+
+            if($_POST['email'] != $currUser['email'] || $_POST['name'] != $currUser['name'] || $_POST['surname'] != $currUser['surname'] || $_POST['gender'] != $currUser['gender'] || $_POST['status'] != $currUser['status']) {
+                $checkUser = $users->checkUser($_POST['email'], $_POST['id']);
+                if($checkUser == 'User is already exist') {
+                    $data['error'] = $checkUser;
+                } else {
+                    $users->setData($_POST['email'], $_POST['name'], $_POST['surname'], $_POST['gender'], $_POST['status']);
+                    $valid = $users->validation();
+                    if($valid == 'Correct data') {
+                        $users->updateUser($_POST['id'], $_POST['email'], $_POST['name'], $_POST['surname'], $_POST['gender'], $_POST['status']);   
+                        $data['success'] = 'Successfully updated';
+                    } else {
+                        $data['error'] = $valid;
+                    }   
+                }  
+            } else {
+                $data['error'] = 'You should change something to save the result';
+            }
+        }
+    
         if(isset($_POST['delete'])) {
             $users->deleteUser($_POST['delete']);
         }
 
-        $data['users'] = $users->getUsers();
+        $data['user'] = $users->getUser($id);
 
-        $this->view('user/list', $data);
+        $this->view('user/edit', $data);
     }
     
 }

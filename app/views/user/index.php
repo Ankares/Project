@@ -11,8 +11,8 @@
 <body>
     <?php require_once 'public/blocks/header.php'?>
 
-    <form action="/user" method="post" class="mt-5 mx-auto w-50 justify-content-center form-control">  
-        <h4 class="text-center">Add user</h4>
+    <form action="/user" method="post" class="mt-5 p-4 mx-auto justify-content-center w-50 form-control fs-4">  
+        <h2 class="text-center">Add user</h2>
         <div class="form-group">
             <label class="mb-2">Email address:</label>
             <input type="email" name="email" class="form-control mb-2" placeholder="Enter email" value="<? if(isset($_POST['email'])) echo $_POST['email'] ?>">  
@@ -47,14 +47,19 @@
                 </option>
             </select>
         </div>
-        <div class="mt-2 text-danger fw-bold errorBlock">
-            <?php if(!empty($data['error'])) {echo $data['error'];} ?>
-        </div>
-        <button type="submit" class="mt-3 mb-2 btn btn-primary">Регистрация</button>
+        <?php if(isset($data['error'])): ?>
+            <div class="error mt-3 fw-bold fs-4 text-danger"><?=$data['error'];?></div>
+        <?php elseif(isset($data['success'])): ?>
+            <div class="success mt-3 fw-bold fs-4 text-success "><?=$data['success'];?></div>
+        <?php endif;?>
+      
+        <button type="submit" class="mt-3 mb-3 btn btn-primary col-md-3 col-8 p-2">Add user</button>
            
     </form>
 
 
     <?php require_once 'public/blocks/footer.php'?>
+
+    <script src="/app/js/script.js"></script>
 </body>
 </html>

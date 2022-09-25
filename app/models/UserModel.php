@@ -29,7 +29,7 @@ class UserModel
 
     public function validation() 
     {
-        if(!preg_match("/^[a-zA-Z0-9_\-.]+@[a-zA-Z0-9\-]+\.(ru|com)/", $this->email))
+        if(!preg_match("/^[a-zA-Z0-9_\-.]+@[a-zA-Z0-9\-]+\.(ru|com)$/", $this->email))
             return 'Email is incorrect. Please try again';
         if(!preg_match("/^[a-zA-Z]{2,15}$/i", $this->name))
             return 'Name is incorrect. Please try again';
@@ -50,9 +50,9 @@ class UserModel
         $query->execute(['email'=>$this->email, 'name'=>$this->name, 'surname'=>$this->surname, 'gender'=>$this->gender, 'status'=>$this->status]);
     }
 
-    public function checkUser($email)
+    public function checkUser($email, $id = '')
     {
-        $sql = $this->db->query("SELECT * FROM users WHERE email = '$email'");
+        $sql = $this->db->query("SELECT * FROM users WHERE email = '$email' AND id != '$id'");
         $user = $sql->fetch(PDO::FETCH_ASSOC);
         if(isset($user['email'])) {
             return 'User is already exist';
