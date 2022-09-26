@@ -1,4 +1,4 @@
-CREATE TABLE project.users (
+CREATE TABLE IF NOT EXISTS project.users (
 	id INT(10) auto_increment NOT NULL,
 	email VARCHAR(100) NOT NULL,
 	name VARCHAR(100) NOT NULL,

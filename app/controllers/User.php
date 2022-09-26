@@ -6,7 +6,7 @@ class User extends Controller
     {
         $data = [];
 
-        if(isset($_POST['email']) && isset($_POST['name'])) {
+        if (isset($_POST['email']) && isset($_POST['name'])) {
             
             $user = $this->model('UserModel');
             $user->setData($_POST['email'], $_POST['name'], $_POST['surname'], $_POST['gender'], $_POST['status']);
@@ -14,10 +14,10 @@ class User extends Controller
             $checkUser = $user->checkUser($_POST['email']);
             $valid = $user->validation();
 
-            if($checkUser == 'User is already exist') {
+            if ($checkUser == 'User is already exist') {
                 $data['error'] = $checkUser;
             } else {
-                if($valid == 'Correct data') {
+                if ($valid == 'Correct data') {
                     $user->addUser();
                     $data['success'] = 'User successfully added';
                 } else {
@@ -25,6 +25,7 @@ class User extends Controller
                 }
             }  
         }
+
         $this->view('user/index', $data);
     }
 
@@ -41,16 +42,17 @@ class User extends Controller
         $users = $this->model('UserModel');
         $currUser = $users->getUser($id);
 
-        if(isset($_POST['id'])) {
+        if (isset($_POST['id'])) {
 
-            if($_POST['email'] != $currUser['email'] || $_POST['name'] != $currUser['name'] || $_POST['surname'] != $currUser['surname'] || $_POST['gender'] != $currUser['gender'] || $_POST['status'] != $currUser['status']) {
+            // checking for updating something, then validate and update user
+            if ($_POST['email'] != $currUser['email'] || $_POST['name'] != $currUser['name'] || $_POST['surname'] != $currUser['surname'] || $_POST['gender'] != $currUser['gender'] || $_POST['status'] != $currUser['status']) {
                 $checkUser = $users->checkUser($_POST['email'], $_POST['id']);
-                if($checkUser == 'User is already exist') {
+                if ($checkUser == 'User is already exist') {
                     $data['error'] = $checkUser;
                 } else {
                     $users->setData($_POST['email'], $_POST['name'], $_POST['surname'], $_POST['gender'], $_POST['status']);
                     $valid = $users->validation();
-                    if($valid == 'Correct data') {
+                    if ($valid == 'Correct data') {
                         $users->updateUser($_POST['id'], $_POST['email'], $_POST['name'], $_POST['surname'], $_POST['gender'], $_POST['status']);   
                         $data['success'] = 'Successfully updated';
                     } else {
@@ -62,7 +64,7 @@ class User extends Controller
             }
         }
     
-        if(isset($_POST['delete'])) {
+        if (isset($_POST['delete'])) {
             $users->deleteUser($_POST['delete']);
         }
 

@@ -9,21 +9,22 @@
 </head>
 <body>
     <?php require_once "public/blocks/header.php"?>
+    
     <div class="container">
         <h2 class="mt-5 mb-5 text-center">All users</h2>
 
-        <?php if(empty($data['users'])):?>
+        <?php if (empty($data['users'])) : ?>
             <h3 class="text-center">No users found</h3>
-        <?php endif;?>
+        <?php endif; ?>
 
         <?php foreach($data['users'] as $user) : ?>
             <ul class="list-group">
                 <button class="trigger-menu btn btn-outline-secondary shadow-none offset-md-2 offset-0 col-md-8 col-12 mb-3">
-                    <h5>Show user: <?=$user['name']?></h5>
+                    <h5>Show user: <?=$user['email']?></h5>
                 </button>
                 <li class="list-group-item offset-md-2 offset-0 col-md-8 col-12 mb-4 fs-5 p-4">
                     <form action="/user/list" method="post">                        
-                        <h4 class="col-md-10 col-8 float-start"><?php echo 'User: ' . $user['name']?></h4>
+                        <h4 class="col-md-10 col-8 float-start"><?php echo 'User: ' . $user['email']?></h4>
                         <a href="/user/edit/<?=$user['id']?>" class="btn btn-primary col-md-2 col-4">Edit user</a> 
                         <div class="row mx-md-3 mx-0 mt-3">
                             <div class="col-3 col-md-3">
@@ -33,7 +34,7 @@
                                 <p class="me-5">Gender:</p>   
                                 <p class="me-5">Status:</p> 
                             </div>
-                            <div class=" offset-2 offset-md-0 col-7 col-md-9">
+                            <div class="offset-2 offset-md-0 col-7 col-md-9">
                                 <input name="email" class="form-control-plaintext" disabled value="<?=$user['email']?>">
                                 <p name="name" class="me-5" value=><?=$user['name']?></p>
                                 <p name="surname" class= "me-5" value=><?=$user['surname']?></p>
@@ -44,7 +45,7 @@
                     </form> 
                 </li>
             </ul>
-        <?php endforeach;?>
+        <?php endforeach; ?>
     </div>
 
     <?php require_once "public/blocks/footer.php"?>
