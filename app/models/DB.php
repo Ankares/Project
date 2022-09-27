@@ -4,7 +4,7 @@ class DB
 {
     private static $db = null;
 
-    public static function getInstence()
+    public static function getInstance()
     {
         if (self::$db == null) {
             self::$db = new PDO('mysql:host=' . $_ENV['DB_HOST'] . ';dbname=' . $_ENV['DB_NAME'], $_ENV['DB_USER'], $_ENV['DB_PASSWORD']);

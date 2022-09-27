@@ -6,19 +6,21 @@ class User extends Controller
     {
         $data = [];
 
+        $model = new \UserModel;
+        $users = $model->init();
+
         if (isset($_POST['email']) && isset($_POST['name'])) {
+
+            $users->setData($_POST['email'], $_POST['name'], $_POST['surname'], $_POST['gender'], $_POST['status']);
             
-            $user = $this->model('UserModel');
-            $user->setData($_POST['email'], $_POST['name'], $_POST['surname'], $_POST['gender'], $_POST['status']);
-            
-            $checkUser = $user->checkUser($_POST['email']);
-            $valid = $user->validation();
+            $checkUser = $users->checkUser($_POST['email']);
+            $valid = $users->validation();
 
             if ($checkUser == 'User is already exist') {
                 $data['error'] = $checkUser;
             } else {
                 if ($valid == 'Correct data') {
-                    $user->addUser();
+                    $users->add();
                     $data['success'] = 'User successfully added';
                 } else {
                     $data['error'] = $valid;
@@ -31,16 +33,19 @@ class User extends Controller
 
     public function list()
     {
-        $users = $this->model('UserModel');
-        $data['users'] = $users->getUsers();
+        $model = new \UserModel;
+        $users = $model->init();
+
+        $data['users'] = $users->getAllData();
 
         $this->view('user/list', $data);
     }
 
     public function edit($id)
     {
-        $users = $this->model('UserModel');
-        $currUser = $users->getUser($id);
+        $model = new \UserModel;
+        $users = $model->init();
+        $currUser = $users->getDataByID($id);
 
         if (isset($_POST['id'])) {
 
@@ -65,10 +70,10 @@ class User extends Controller
         }
     
         if (isset($_POST['delete'])) {
-            $users->deleteUser($_POST['delete']);
+            $users->deleteByID($_POST['delete']);
         }
 
-        $data['user'] = $users->getUser($id);
+        $data['user'] = $users->deleteByID($id);
 
         $this->view('user/edit', $data);
     }
