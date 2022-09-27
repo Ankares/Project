@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Core;
+
 class App
 {
 
@@ -14,7 +16,7 @@ class App
         }
     }
 
-    public function __construct() 
+    public function __invoke() 
     {
         $url = $this->parseURL();
         
@@ -27,9 +29,7 @@ class App
             }
         }
 
-        require_once 'app/controllers/' . $this->controller . '.php';
-
-        $this->controller = new $this->controller;
+        $this->controller = new ('App\Controllers\\'.$this->controller)();
 
         if (isset($url[1])) {
             if (method_exists($this->controller, $url[1])) {

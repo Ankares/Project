@@ -1,5 +1,5 @@
 
-CREATE TABLE IF NOT EXISTS project.versions (
+CREATE TABLE IF NOT EXISTS versions (
     id INT(10) auto_increment NOT NULL,
     name VARCHAR(255) NOT NULL,
     created TIMESTAMP DEFAULT current_timestamp,

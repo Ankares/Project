@@ -1,7 +1,8 @@
 <?php
 
+namespace App\Models\Repositories;
 
-class UserRepository implements User{
+class UserRepository implements UserInterface{
     
     private $name;
     private $surname;
