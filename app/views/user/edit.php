@@ -17,7 +17,7 @@
         <ul class="list-group">
             <li class="list-group-item offset-md-2 offset-0 col-md-8 col-12 mb-4 fs-5 p-4">
                 <a href="/user/list" class="btn btn-outline-primary float-start col-md-2 col-4">Return</a> 
-                <form action="/user/edit/<?=$data['user']['id']?>" method="post" onsubmit="return confirm('Are you sure?');">
+                <form action="/user/delete" method="post" onsubmit="return confirm('Are you sure?');">
                     <input type="hidden" name="delete" value="<?=$data['user']['id']?>">
                     <button class="btn btn-danger offset-md-9 offset-6 col-md-1 col-2">&times;</button>
                 </form>

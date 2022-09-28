@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\UserModel;
+
 require 'vendor/autoload.php';
 
 (Dotenv\Dotenv::createImmutable(__DIR__))->load();

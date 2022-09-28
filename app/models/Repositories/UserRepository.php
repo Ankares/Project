@@ -1,49 +1,16 @@
 <?php
 
 namespace App\Models\Repositories;
+use App\Models;
 
-class UserRepository implements UserInterface{
-    
-    private $name;
-    private $surname;
-    private $email;
-    private $gender;
-    private $status;
+class UserRepository implements IUserProcessing{
 
     private $db = null;
-
-    public static function loadDB() {
-        return new \PDO('mysql:host=' . $_ENV['DB_HOST'] . ';dbname=' . $_ENV['DB_NAME'], $_ENV['DB_USER'], $_ENV['DB_PASSWORD']);
-    }
+    protected $checkUserExistence = '';
 
     public function __construct()
     {
-        $this->db = UserRepository::loadDB();
-    }
-
-    public function setData($email, $name, $surname, $gender, $status)
-    {
-        $this->email = $email;
-        $this->name = $name;
-        $this->surname = $surname;
-        $this->gender = $gender;
-        $this->status = $status;
-    }
-
-    public function validation() 
-    {
-        if (!preg_match("/^[a-zA-Z0-9_\-.]+@[a-zA-Z0-9\-]+\.(ru|com)$/", $this->email))
-            return 'Email is incorrect. Please try again';
-        if (!preg_match("/^[a-zA-Z]{2,15}$/i", $this->name))
-            return 'Name is incorrect. Please try again';
-        if (!preg_match("/^[a-zA-Z]{2,15}$/i", $this->surname))
-            return 'Surname is incorrect. Please try again';
-        if (!isset($this->gender))
-            return 'Please select your gender';
-        if (!isset($this->status))
-            return 'Please select your status';
-        
-        return 'Correct data';
+        $this->db = Models\DB::getInstance();
     }
 
     public function add()
@@ -59,7 +26,7 @@ class UserRepository implements UserInterface{
         $sql = $this->db->query("SELECT * FROM users WHERE email = '$email' AND id != '$id'");
         $user = $sql->fetch(\PDO::FETCH_ASSOC);
         if (isset($user['email'])) {
-            return 'User is already exist';
+            $this->checkUserExistence = 'User is already exist';
         }
     }
 

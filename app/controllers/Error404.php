@@ -3,9 +3,9 @@
 namespace App\Controllers;
 use App\Core\Controller;
 
-class Home extends Controller
+class Error404 extends Controller
 {   
     public function index() {
-        $this->view('home/index');
+        $this->view('error404/index');
     }
 }
