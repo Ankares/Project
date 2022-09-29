@@ -56,7 +56,8 @@
                             </select>
                             <?php if (isset($data['error'])) : ?>
                                 <div class="error text-danger mt-3 fw-bold fs-4"><?=$data['error'];?></в>
-                            <?php elseif (isset($data['success'])) : ?>
+                            <?php endif; ?>
+                            <?php if (isset($data['success'])) : ?>
                                 <div class="success text-success mt-3 fs-4 fw-bold"><?=$data['success'];?></div>
                             <?php endif; ?>
                         </div>

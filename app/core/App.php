@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Core;
+use App\Models\UserModel;
+use App\Models\DB;
 
 class App
 {
@@ -16,8 +18,15 @@ class App
         }
     }
 
-    public function __invoke() 
+    private function bootstrap()
     {
+        $connection = ServiceProvider::getInstance();
+        $connection->bind(UserModel::class, static fn() => new UserModel());
+    }
+
+    public function run() 
+    {
+        $this->bootstrap();
         $url = $this->parseURL();
         
         if (isset($url)) {

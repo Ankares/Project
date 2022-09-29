@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Models\Repositories;
-use App\Models;
+use App\Models\DB;
 
 class UserRepository implements IUserProcessing{
 
@@ -10,7 +10,7 @@ class UserRepository implements IUserProcessing{
 
     public function __construct()
     {
-        $this->db = Models\DB::getInstance();
+        $this->db = DB::getInstance();
     }
 
     public function add()

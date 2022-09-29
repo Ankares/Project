@@ -3,7 +3,8 @@
 namespace App\Controllers;
 use App\Models;
 use App\Core\Controller;
-
+use App\Core\ServiceProvider;
+use App\Models\UserModel;
 
 class User extends Controller
 {
@@ -11,7 +12,7 @@ class User extends Controller
     public $data = [];
 
     public function __construct() {
-        $this->users = $this->bootstrap(Models\UserModel::class);
+        $this->users = ServiceProvider::getInstance()->make(UserModel::class);
     }
 
     public function index() 
@@ -20,11 +21,11 @@ class User extends Controller
             $this->users->setData($_POST['email'], $_POST['name'], $_POST['surname'], $_POST['gender'], $_POST['status']);
             $this->users->checkUser($_POST['email']);
             $this->users->validation();
-            if (empty($this->users->errors)) {
+            if (empty($this->users->error)) {
                 $this->users->add();
                 $this->data['success'] = 'User successfully added';
             } else {
-                $this->data['error'] = $this->users->errors;
+                $this->data['error'] = $this->users->error;
             }
         }
         $this->view('user/index', $this->data);
@@ -42,11 +43,11 @@ class User extends Controller
             $this->users->setData($_POST['email'], $_POST['name'], $_POST['surname'], $_POST['gender'], $_POST['status']);
             $this->users->checkUser($_POST['email'], $_POST['id']);
             $this->users->validation();
-            if (empty($this->users->errors)) {
+            if (empty($this->users->error)) {
                 $this->users->updateUser($_POST['id'], $_POST['email'], $_POST['name'], $_POST['surname'], $_POST['gender'], $_POST['status']);   
                 $this->data['success'] = 'Successfully updated';
             } else {
-                $this->data['error'] = $this->users->errors;
+                $this->data['error'] = $this->users->error;
             }            
         }
         $this->data['user'] = $this->users->getDataByID($id);

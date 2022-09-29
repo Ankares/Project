@@ -49,7 +49,8 @@
         </div>
         <?php if(isset($data['error'])): ?>
             <div class="error mt-3 fw-bold fs-4 text-danger"><?=$data['error'];?></div>
-        <?php elseif(isset($data['success'])): ?>
+        <?php endif;?>
+        <?php if(isset($data['success'])): ?>
             <div class="success mt-3 fw-bold fs-4 text-success "><?=$data['success'];?></div>
         <?php endif;?>
       

@@ -10,7 +10,7 @@ class UserModel extends UserRepository
     protected $email;
     protected $gender;
     protected $status;
-    public $errors = '';
+    public $error = '';
     
     public function setData(string $email, string $name, string $surname, string $gender, string $status)
     {
@@ -25,61 +25,64 @@ class UserModel extends UserRepository
     {
         foreach(get_object_vars($this) as $key => $value) {
             if($value === null) {
-                $this->errors = "$key is empty"; 
+                return $this->error = "$key is empty"; 
             }
         }
         if ($this->checkUserExistence != '') {
-            $this->errors = $this->checkUserExistence;
+            return $this->error = $this->checkUserExistence;
         }
-        $this->nameValidation();
         $this->surnameValidation();
+        $this->nameValidation();
         $this->emailValidation();
         $this->genderValidation();
         $this->statusValidation();
 
-        return $this->errors;
+        return $this->error;
     }
 
-    private function emailValidation(): void
+    private function emailValidation()
     {
         if (empty($this->email)) {
-            $this->errors = 'Email is empty';
-        } elseif(!preg_match("/^[a-zA-Z0-9_\-.]+@[a-zA-Z0-9\-]+\.(ru|com)$/", $this->email)) {
-            $this->errors = 'Email is incorrect. Please try again';
+            return $this->error = 'Email is empty';
+        } 
+        if (!preg_match("/^[a-zA-Z0-9_\-.]+@[a-zA-Z0-9\-]+\.(ru|com)$/", $this->email)) {
+            return $this->error = 'Email is incorrect. Please try again';
         }
         
     }
 
-    private function nameValidation(): void 
+    private function nameValidation() 
     {
         if (empty($this->name)) {
-            $this->errors = 'Name is empty';
-        } elseif (!preg_match("/^[a-zA-Z]+$/i", $this->name)) {
-            $this->errors ='Name is incorrect. Please try again';
+            return $this->error = 'Name is empty';
+        } 
+        if (!preg_match("/^[a-zA-Z]+$/i", $this->name)) {
+            return $this->error ='Name is incorrect. Please try again';
         }
     }
 
-    private function surnameValidation(): void 
+    private function surnameValidation() 
     {
         if (empty($this->surname)) {
-            $this->errors = 'Surname is empty';
-        } elseif (!preg_match("/^[a-zA-Z]+$/i", $this->surname)) {
-            $this->errors ='Surname is incorrect. Please try again';
+            return $this->error = 'Surname is empty';
+        } 
+        if (!preg_match("/^[a-zA-Z]+$/i", $this->surname)) {
+            return $this->error ='Surname is incorrect. Please try again';
         }   
     }
 
-    private function genderValidation(): void  
+    private function genderValidation()   
     {
         if (!isset($this->gender)) {
-            $this->errors ='Please select your gender';
+            return $this->error ='Please select your gender';
         }
         
     }
 
-    private function statusValidation(): void  
+    private function statusValidation()  
     {
         if (!isset($this->status)) {
-            $this->errors ='Please select your status';
+            return $this->error ='Please select your status';
         }
     }
 
