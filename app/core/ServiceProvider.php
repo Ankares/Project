@@ -17,12 +17,12 @@ class ServiceProvider
         return self::$connection[$class];
     }
 
-    function make(string $class) 
+    public function make(string $class) 
     {
         return isset($this->container[$class]) ? $this->container[$class]() : new $class;
     }
 
-    function bind(string $class, \Closure $resolver) 
+    public function bind(string $class, \Closure $resolver) 
     {
         $this->container[$class] = $resolver;
     }
