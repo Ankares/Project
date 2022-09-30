@@ -2,6 +2,7 @@
 
 namespace App\Models\Repositories;
 use App\Models\DB;
+use App\Models\UserModel;
 
 class UserRepository implements IUserProcessing{
 
@@ -18,6 +19,13 @@ class UserRepository implements IUserProcessing{
         $sql = 'INSERT INTO users(email, name, surname, gender, status) VALUES(:email, :name, :surname, :gender, :status)';
         $query = $this->db->prepare($sql);
         $query->execute(['email'=>$this->email, 'name'=>$this->name, 'surname'=>$this->surname, 'gender'=>$this->gender, 'status'=>$this->status]);
+    }
+
+    public function add2(UserModel $user)
+    {
+        $sql = 'INSERT INTO users(email, name, surname, gender, status) VALUES(:email, :name, :surname, :gender, :status)';
+        $query = $this->db->prepare($sql);
+        $query->execute(['email'=>$user->email, 'name'=>$user->name, 'surname'=>$user->surname, 'gender'=>$user->gender, 'status'=>$user->status]);
     }
 
     // checking for uniq email (id check for editing current user => can use own email, not others)
@@ -40,6 +48,16 @@ class UserRepository implements IUserProcessing{
     {
         $sql = $this->db->query("SELECT * FROM users WHERE id = '$id'");
         return $sql->fetch(\PDO::FETCH_ASSOC);
+    }
+
+    public function getDataByID2($id)
+    {
+        $sql = $this->db->query("SELECT * FROM users WHERE id = '$id'");
+        $data = $sql->fetch(\PDO::FETCH_ASSOC);
+        $model = new UserModel();
+        $model->setData(...$data);
+
+        return $model;
     }
 
     public function updateUser($id, $email, $name, $surname, $gender, $status)

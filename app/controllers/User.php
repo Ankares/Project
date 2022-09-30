@@ -8,20 +8,26 @@ use App\Models\UserModel;
 
 class User extends Controller
 {
-    public $users;
+    //public $users;
     public $data = [];
 
-    public function __construct() {
-        $this->users = ServiceProvider::getInstance()->make(UserModel::class);
+    public function __construct(
+        private Models\Repositories\IUserProcessing $users,
+        private Models\Repositories\UserRepository $repository,
+        private ?string $returnType = null
+    ) {
+        //$this->users = ServiceProvider::getInstance()->make(UserModel::class);
     }
 
     public function index() 
     {
         if (isset($_POST['email'])) {
             $this->users->setData($_POST['email'], $_POST['name'], $_POST['surname'], $_POST['gender'], $_POST['status']);
+            //$this->users->setData(array_intersect_key($_POST, array_flip(['email', 'surname'])));
             $this->users->checkUser($_POST['email']);
             $this->users->validation();
             if (empty($this->users->error)) {
+                //$this->repository->add($this->users);
                 $this->users->add();
                 $this->data['success'] = 'User successfully added';
             } else {
@@ -34,6 +40,7 @@ class User extends Controller
     public function list()
     {
         $this->data['users'] = $this->users->getAllData();
+        //$this->data['users'] = $this->repository->getAllData();
         $this->view('user/list', $this->data);
     }
 

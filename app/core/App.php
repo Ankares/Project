@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Core;
+use App\Controllers\User;
+use App\Models\Repositories\IUserProcessing;
 use App\Models\UserModel;
 use App\Models\DB;
 
@@ -21,10 +23,14 @@ class App
     private function bootstrap()
     {
         $connection = ServiceProvider::getInstance();
-        $connection->bind(UserModel::class, static fn() => new UserModel());
+        //$connection->bind(UserModel::class, static fn() => new UserModel());
+        $connection->bind(IUserProcessing::class, static fn(ServiceProvider $sp) => $sp->make(UserModel::class));
+        $connection->bind(User::class, static fn(ServiceProvider $serviceProvider) => new User(
+            $serviceProvider->make(IUserProcessing::class)
+        ));
     }
 
-    public function run() 
+    public function run()
     {
         $this->bootstrap();
         $url = $this->parseURL();
@@ -38,7 +44,9 @@ class App
             }
         }
 
-        $this->controller = new ('App\Controllers\\'.$this->controller)();
+
+        $this->controller = ServiceProvider::getInstance()->make('App\Controllers\\'.$this->controller);
+        //$this->controller = new ('App\Controllers\\'.$this->controller)();
 
         if (isset($url[1])) {
             if (method_exists($this->controller, $url[1])) {
