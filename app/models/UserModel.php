@@ -3,33 +3,31 @@
 namespace App\Models;
 use App\Models\Repositories\UserRepository;
 
-class UserModel extends UserRepository
+class UserModel
 {  
-    protected $name;
-    protected $surname;
-    protected $email;
-    protected $gender;
-    protected $status;
+    public $userData = [
+        'name' => '',
+        'surname' => '',
+        'email' => '',
+        'gender' => '',
+        'status' => '',
+    ];
     public $error = '';
+    public $userExists = false;
     
-    public function setData(string $email, string $name, string $surname, string $gender, string $status)
+    public function setData($data)
     {
-        $this->email = $email;
-        $this->name = $name;
-        $this->surname = $surname;
-        $this->gender = $gender;
-        $this->status = $status;
+        foreach($data as $key => $value) {
+            if(array_key_exists($key, $this->userData)) {
+                $this->userData[$key] = $value;
+            }
+        }
     }
 
     public function validation(): string
     {
-        foreach(get_object_vars($this) as $key => $value) {
-            if($value === null) {
-                return $this->error = "$key is empty"; 
-            }
-        }
-        if ($this->checkUserExistence != '') {
-            return $this->error = $this->checkUserExistence;
+        if ($this->userExists != false) {
+            return $this->error = 'User is already exist';
         }
         $this->surnameValidation();
         $this->nameValidation();
@@ -42,10 +40,10 @@ class UserModel extends UserRepository
 
     private function emailValidation()
     {
-        if (empty($this->email)) {
+        if (empty($this->userData['email'])) {
             return $this->error = 'Email is empty';
         } 
-        if (!preg_match("/^[a-zA-Z0-9_\-.]+@[a-zA-Z0-9\-]+\.(ru|com)$/", $this->email)) {
+        if (!preg_match("/^[a-zA-Z0-9_\-.]+@[a-zA-Z0-9\-]+\.(ru|com)$/", $this->userData['email'])) {
             return $this->error = 'Email is incorrect. Please try again';
         }
         
@@ -53,27 +51,27 @@ class UserModel extends UserRepository
 
     private function nameValidation() 
     {
-        if (empty($this->name)) {
+        if (empty($this->userData['name'])) {
             return $this->error = 'Name is empty';
         } 
-        if (!preg_match("/^[a-zA-Z]+$/i", $this->name)) {
+        if (!preg_match("/^[a-zA-Z]+$/i", $this->userData['name'])) {
             return $this->error ='Name is incorrect. Please try again';
         }
     }
 
     private function surnameValidation() 
     {
-        if (empty($this->surname)) {
+        if (empty($this->userData['surname'])) {
             return $this->error = 'Surname is empty';
         } 
-        if (!preg_match("/^[a-zA-Z]+$/i", $this->surname)) {
+        if (!preg_match("/^[a-zA-Z]+$/i", $this->userData['surname'])) {
             return $this->error ='Surname is incorrect. Please try again';
         }   
     }
 
     private function genderValidation()   
     {
-        if (!isset($this->gender)) {
+        if (!isset($this->userData['gender'])) {
             return $this->error ='Please select your gender';
         }
         
@@ -81,7 +79,7 @@ class UserModel extends UserRepository
 
     private function statusValidation()  
     {
-        if (!isset($this->status)) {
+        if (!isset($this->userData['status'])) {
             return $this->error ='Please select your status';
         }
     }
