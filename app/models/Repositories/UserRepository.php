@@ -5,8 +5,9 @@ use App\Models\UserModel;
 
 class UserRepository implements IUserProcessing{
     
-    public $curl = null;
-    public $accessToken = '96eedf4ca052d9e7a52cf5afe705ea35c03ea6be4e084a1f89a467964638df6d';
+    private $curl = null;
+    private $accessToken = '96eedf4ca052d9e7a52cf5afe705ea35c03ea6be4e084a1f89a467964638df6d';
+    
     public function __construct()
     {
         $this->curl = curl_init();
