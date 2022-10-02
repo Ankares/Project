@@ -1,13 +1,11 @@
 <?php
 
 namespace App\Models;
-use App\Models\Repositories\UserRepository;
 
 class UserModel
 {  
     public $userData = [
         'name' => '',
-        'surname' => '',
         'email' => '',
         'gender' => '',
         'status' => '',
@@ -29,7 +27,6 @@ class UserModel
         if ($this->userExists != false) {
             return $this->error = 'User is already exist';
         }
-        $this->surnameValidation();
         $this->nameValidation();
         $this->emailValidation();
         $this->genderValidation();
@@ -43,7 +40,7 @@ class UserModel
         if (empty($this->userData['email'])) {
             return $this->error = 'Email is empty';
         } 
-        if (!preg_match("/^[a-zA-Z0-9_\-.]+@[a-zA-Z0-9\-]+\.(ru|com)$/", $this->userData['email'])) {
+        if (!preg_match("/^[a-zA-Z0-9_\-.]+@[a-zA-Z0-9\-]+\.(ru|com|org|biz|info)$/", $this->userData['email'])) {
             return $this->error = 'Email is incorrect. Please try again';
         }
         
@@ -54,19 +51,9 @@ class UserModel
         if (empty($this->userData['name'])) {
             return $this->error = 'Name is empty';
         } 
-        if (!preg_match("/^[a-zA-Z]+$/i", $this->userData['name'])) {
+        if (!preg_match("/^([a-zA-Z]+) ([a-zA-Z]+)$/i", $this->userData['name'])) {
             return $this->error ='Name is incorrect. Please try again';
         }
-    }
-
-    private function surnameValidation() 
-    {
-        if (empty($this->userData['surname'])) {
-            return $this->error = 'Surname is empty';
-        } 
-        if (!preg_match("/^[a-zA-Z]+$/i", $this->userData['surname'])) {
-            return $this->error ='Surname is incorrect. Please try again';
-        }   
     }
 
     private function genderValidation()   

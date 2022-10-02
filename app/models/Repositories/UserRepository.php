@@ -1,57 +1,91 @@
 <?php
 
 namespace App\Models\Repositories;
-use App\Models\DB;
 use App\Models\UserModel;
 
 class UserRepository implements IUserProcessing{
-
-    private $db = null;
-
+    
+    public $curl = null;
+    public $accessToken = '96eedf4ca052d9e7a52cf5afe705ea35c03ea6be4e084a1f89a467964638df6d';
     public function __construct()
     {
-        $this->db = DB::getInstance();
+        $this->curl = curl_init();
+        curl_setopt_array($this->curl, array(
+            CURLOPT_URL => "https://gorest.co.in/public/v2/users?access-token=$this->accessToken",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_HTTPHEADER => array('Content-Type: application/json')
+          ));
     }
 
+    public function __destruct()
+    {
+        curl_close($this->curl);
+    }
+    
     public function add(UserModel $user)
     {
-        $sql = 'INSERT INTO users(email, name, surname, gender, status) VALUES(:email, :name, :surname, :gender, :status)';
-        $query = $this->db->prepare($sql);
-        $query->execute(['email'=>$user->userData['email'], 'name'=>$user->userData['name'], 'surname'=>$user->userData['surname'], 'gender'=>$user->userData['gender'], 'status'=>$user->userData['status']]);
+        curl_setopt_array($this->curl, array(
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => json_encode($_POST)
+        ));
+        curl_exec($this->curl);
     }
 
     // checking for uniq email (id check for editing current user => can use own email, not others)
     public function checkUser(UserModel $user, $email, $id = '')
     {
-        $sql = $this->db->query("SELECT * FROM users WHERE email = '$email' AND id != '$id'");
-        $data = $sql->fetch(\PDO::FETCH_ASSOC);
-        if (isset($data['email'])) {
-            $user->userExists = true;
+        curl_setopt_array($this->curl, array(
+            CURLOPT_CUSTOMREQUEST => 'GET'
+        ));
+        $response = curl_exec($this->curl);
+        $data = json_decode($response, true);
+        foreach($data as $users) {
+            if($users['email'] == $email && $users['id'] != $id) {
+                $user->userExists = true;
+            }
         }
     }
 
     public function getAllData()
     {
-        $sql = $this->db->query("SELECT * FROM users");
-        return $sql->fetchAll(\PDO::FETCH_ASSOC);
+        curl_setopt_array($this->curl, array(
+            CURLOPT_CUSTOMREQUEST => 'GET',
+        ));
+        $response = curl_exec($this->curl);
+        return json_decode($response, true);
     }
 
     public function getDataByID($id)
     {
-        $sql = $this->db->query("SELECT * FROM users WHERE id = '$id'");
-        return $sql->fetch(\PDO::FETCH_ASSOC);
+        curl_setopt_array($this->curl, array(
+            CURLOPT_URL => "https://gorest.co.in/public/v2/users/$id?access-token=$this->accessToken",
+            CURLOPT_CUSTOMREQUEST => 'GET',
+        ));
+        $response = curl_exec($this->curl);
+        return json_decode($response, true);
     }
 
     public function updateUser(UserModel $user, $id)
     {
-        $sql = "UPDATE users SET email = :email, name = :name, surname = :surname, gender = :gender, status = :status WHERE id = :id";
-        $query = $this->db->prepare($sql);
-        $query->execute(['email'=>$user->userData['email'], 'name'=>$user->userData['name'], 'surname'=>$user->userData['surname'], 'gender'=>$user->userData['gender'], 'status'=>$user->userData['status'], 'id'=>$id]);
+        curl_setopt_array($this->curl, array(
+            CURLOPT_URL => "https://gorest.co.in/public/v2/users/$id?access-token=$this->accessToken",
+            CURLOPT_CUSTOMREQUEST => 'PUT',
+            CURLOPT_POSTFIELDS => json_encode($_POST)
+        ));
+        curl_exec($this->curl);
     }
 
     public function deleteByID($id)
     {
-        $this->db->query("DELETE FROM users WHERE id = '$id'");
+        curl_setopt_array($this->curl, array(
+            CURLOPT_URL => "https://gorest.co.in/public/v2/users/$id?access-token=$this->accessToken",
+            CURLOPT_CUSTOMREQUEST => 'DELETE'
+        ));
+        curl_exec($this->curl);     
     }
-    
 }

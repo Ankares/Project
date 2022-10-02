@@ -4,7 +4,6 @@ namespace App\Core;
 
 use App\Controllers\User;
 use App\Models\UserModel;
-use App\Models\DB;
 use App\Models\Repositories\IUserProcessing;
 use App\Models\Repositories\UserRepository;
 

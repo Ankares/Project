@@ -1,10 +1,7 @@
 <?php
 
 namespace App\Controllers;
-use App\Models;
 use App\Core\Controller;
-use App\Core\ServiceProvider;
-use App\Models\Repositories\IUserProcessing;
 use App\Models\Repositories\UserRepository;
 use App\Models\UserModel;
 

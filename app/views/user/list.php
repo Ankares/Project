@@ -30,14 +30,12 @@
                             <div class="col-3 col-md-3">
                                 <p class="me-5">Email:</p>
                                 <p class="me-5">Name:</p>
-                                <p class="me-5">Surname:</p>
                                 <p class="me-5">Gender:</p>   
                                 <p class="me-5">Status:</p> 
                             </div>
                             <div class="offset-2 offset-md-0 col-7 col-md-9">
-                                <input name="email" class="form-control-plaintext" disabled value="<?=$user['email']?>">
+                                <p name="email" value=><?=$user['email']?></p>
                                 <p name="name" class="me-5" value=><?=$user['name']?></p>
-                                <p name="surname" class= "me-5" value=><?=$user['surname']?></p>
                                 <p name="gender" class="me-5" value=><?=$user['gender']?></p>
                                 <p name="status" class="me-5" value=><?=$user['status']?></p>
                             </div>
