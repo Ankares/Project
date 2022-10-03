@@ -6,13 +6,11 @@ use App\Models\UserModel;
 class UserRepository implements IUserProcessing{
     
     private $curl = null;
-    private $accessToken = '96eedf4ca052d9e7a52cf5afe705ea35c03ea6be4e084a1f89a467964638df6d';
     
-    public function __construct()
+    public function setOpt()
     {
-        $this->curl = curl_init();
         curl_setopt_array($this->curl, array(
-            CURLOPT_URL => "https://gorest.co.in/public/v2/users?access-token=$this->accessToken",
+            CURLOPT_URL => "https://gorest.co.in/public/v2/users?access-token=".$_ENV['ACCESS_TOKEN'],
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -22,24 +20,24 @@ class UserRepository implements IUserProcessing{
             CURLOPT_HTTPHEADER => array('Content-Type: application/json')
           ));
     }
-
-    public function __destruct()
-    {
-        curl_close($this->curl);
-    }
     
     public function add(UserModel $user)
     {
+        $this->curl = curl_init();
+        $this->setOpt();
         curl_setopt_array($this->curl, array(
             CURLOPT_CUSTOMREQUEST => 'POST',
             CURLOPT_POSTFIELDS => json_encode($_POST)
         ));
         curl_exec($this->curl);
+        curl_close($this->curl);
     }
 
     // checking for uniq email (id check for editing current user => can use own email, not others)
     public function checkUser(UserModel $user, $email, $id = '')
     {
+        $this->curl = curl_init();
+        $this->setOpt();
         curl_setopt_array($this->curl, array(
             CURLOPT_CUSTOMREQUEST => 'GET'
         ));
@@ -50,43 +48,56 @@ class UserRepository implements IUserProcessing{
                 $user->userExists = true;
             }
         }
+        curl_close($this->curl);
     }
 
     public function getAllData()
     {
+        $this->curl = curl_init();
+        $this->setOpt();
         curl_setopt_array($this->curl, array(
             CURLOPT_CUSTOMREQUEST => 'GET',
         ));
         $response = curl_exec($this->curl);
         return json_decode($response, true);
+        curl_close($this->curl);
     }
 
     public function getDataByID($id)
     {
+        $this->curl = curl_init();
+        $this->setOpt();
         curl_setopt_array($this->curl, array(
-            CURLOPT_URL => "https://gorest.co.in/public/v2/users/$id?access-token=$this->accessToken",
+            CURLOPT_URL => "https://gorest.co.in/public/v2/users/$id?access-token=".$_ENV['ACCESS_TOKEN'],
             CURLOPT_CUSTOMREQUEST => 'GET',
         ));
         $response = curl_exec($this->curl);
         return json_decode($response, true);
+        curl_close($this->curl);
     }
 
     public function updateUser(UserModel $user, $id)
     {
+        $this->curl = curl_init();
+        $this->setOpt();
         curl_setopt_array($this->curl, array(
-            CURLOPT_URL => "https://gorest.co.in/public/v2/users/$id?access-token=$this->accessToken",
+            CURLOPT_URL => "https://gorest.co.in/public/v2/users/$id?access-token=".$_ENV['ACCESS_TOKEN'],
             CURLOPT_CUSTOMREQUEST => 'PUT',
             CURLOPT_POSTFIELDS => json_encode($_POST)
         ));
         curl_exec($this->curl);
+        curl_close($this->curl);
     }
 
     public function deleteByID($id)
     {
+        $this->curl = curl_init();
+        $this->setOpt();
         curl_setopt_array($this->curl, array(
-            CURLOPT_URL => "https://gorest.co.in/public/v2/users/$id?access-token=$this->accessToken",
+            CURLOPT_URL => "https://gorest.co.in/public/v2/users/$id?access-token=".$_ENV['ACCESS_TOKEN'],
             CURLOPT_CUSTOMREQUEST => 'DELETE'
         ));
-        curl_exec($this->curl);     
+        curl_exec($this->curl);    
+        curl_close($this->curl); 
     }
 }
