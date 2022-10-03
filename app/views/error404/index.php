@@ -8,5 +8,6 @@
 </head>
 <body>
     <h1>Error404</h1>
+    <a href="/home">Вернуться на главную</a>
 </body>
 </html>

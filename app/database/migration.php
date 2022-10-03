@@ -1,11 +1,12 @@
 <?php
 
+use App\Models\DB;
+
 require 'vendor/autoload.php';
 
 (Dotenv\Dotenv::createImmutable(__DIR__ . '\..\..'))->load();
 
-
-$db = connectDB();
+$db = DB::getInstance('localhost');
 $files = getMigrationFiles($db);
 
 if (empty($files)) {
@@ -17,21 +18,6 @@ if (empty($files)) {
     }
 
     echo '---Mirgation done.';
-}
-
-function connectDB() {
-    $errorMessage = 'Cant connect to DB';
-    $db = new PDO('mysql:host=localhost' . ';dbname=' . $_ENV['DB_NAME'], $_ENV['DB_USER'], $_ENV['DB_PASSWORD']);
-    if (!$db) {
-        throw new Exception($errorMessage);
-    } else {
-        $query = $db->query('set names utf8');
-        if (!$query) {
-            throw new Exception($errorMessage);
-        } else {
-            return $db;
-        }     
-    }
 }
 
 function getMigrationFiles($db) {

@@ -8,10 +8,9 @@ use App\Models\Repositories\IUserProcessing;
 use App\Models\Repositories\UserRepository;
 use App\Models\UserModel;
 
-class User extends Controller
+class UserController extends Controller
 {
-    // public $users;
-    public $data = [];
+    private $data = [];
 
     public function __construct(
         private UserModel $user,
