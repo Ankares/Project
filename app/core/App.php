@@ -2,7 +2,7 @@
 
 namespace App\Core;
 
-use App\Controllers\User;
+use App\Controllers\UserController;
 use App\Models\UserModel;
 use App\Models\Repositories\IUserProcessing;
 use App\Models\Repositories\UserRepository;
@@ -10,9 +10,9 @@ use App\Models\Repositories\UserRepository;
 class App
 {
 
-    protected $controller = 'Home';
-    protected $method = 'index';
-    protected $params = [];
+    private $controller = 'Home';
+    private $method = 'index';
+    private $params = [];
 
     public function parseURL()
     {
@@ -25,7 +25,7 @@ class App
     {
         $connection = ServiceProvider::getInstance();
         $connection->bind(IUserProcessing::class, static fn(ServiceProvider $provider) => $provider->make(UserModel::class));
-        $connection->bind(User::class, static fn(ServiceProvider $service) => new User($service->make(IUserProcessing::class), $service->make(UserRepository::class)));
+        $connection->bind(UserController::class, static fn(ServiceProvider $service) => new UserController($service->make(IUserProcessing::class), $service->make(UserRepository::class)));
     }
 
     public function run() 
@@ -34,7 +34,7 @@ class App
         $url = $this->parseURL();
         
         if (isset($url)) {
-            if (file_exists('app/controllers/' . ucfirst($url[0] . '.php'))) {
+            if (file_exists('app/controllers/' . ucfirst($url[0] . 'Controller.php'))) {
                 $this->controller = ucfirst($url[0]);
                 unset($url[0]);
             } else {
@@ -42,7 +42,7 @@ class App
             }
         }
 
-        $this->controller = ServiceProvider::getInstance()->make('App\Controllers\\'.$this->controller);
+        $this->controller = ServiceProvider::getInstance()->make('App\Controllers\\'.$this->controller . 'Controller');
         // $this->controller = new ('App\Controllers\\'.$this->controller)();
 
         if (isset($url[1])) {
