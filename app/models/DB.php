@@ -5,10 +5,10 @@ class DB
 {
     private static $db = null;
 
-    public static function getInstance($host='mysql')
+    public static function getInstance()
     {
         if (self::$db == null) {
-            self::$db = new \PDO('mysql:host=' . $host . ';dbname=' . $_ENV['DB_NAME'], $_ENV['DB_USER'], $_ENV['DB_PASSWORD']);
+            self::$db = new \PDO('mysql:host=' . $_ENV['DB_HOST'] . ';dbname=' . $_ENV['DB_NAME'], $_ENV['DB_USER'], $_ENV['DB_PASSWORD']);
         }
         return self::$db;
     }
