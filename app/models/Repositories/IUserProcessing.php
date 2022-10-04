@@ -6,7 +6,7 @@ use App\Models\UserModel;
 
 interface IUserProcessing
 {
-    public function add(UserModel $class);
+    public function add(UserModel $class, $file, $size);
     public function checkUser(UserModel $class, $email, $id = '');
     public function updateUser(UserModel $class, $id);
     public function getAllData();

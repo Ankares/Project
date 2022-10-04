@@ -13,11 +13,11 @@ class UserRepository implements IUserProcessing{
         $this->db = DB::getInstance();
     }
 
-    public function add(UserModel $user)
+    public function add(UserModel $user, $file, $size)
     {
-        $sql = 'INSERT INTO users(email, name, surname, gender, status) VALUES(:email, :name, :surname, :gender, :status)';
+        $sql = 'INSERT INTO users(email, name, surname, gender, status, file, size) VALUES(:email, :name, :surname, :gender, :status, :file, :size)';
         $query = $this->db->prepare($sql);
-        $query->execute(['email'=>$user->userData['email'], 'name'=>$user->userData['name'], 'surname'=>$user->userData['surname'], 'gender'=>$user->userData['gender'], 'status'=>$user->userData['status']]);
+        $query->execute(['email'=>$user->userData['email'], 'name'=>$user->userData['name'], 'surname'=>$user->userData['surname'], 'gender'=>$user->userData['gender'], 'status'=>$user->userData['status'], 'file'=>$file, 'size'=>$size]);
     }
 
     // checking for uniq email (id check for editing current user => can use own email, not others)

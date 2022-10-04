@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Models;
-use App\Models\Repositories\UserRepository;
 
 class UserModel
 {  
@@ -10,7 +9,7 @@ class UserModel
         'surname' => '',
         'email' => '',
         'gender' => '',
-        'status' => '',
+        'status' => ''
     ];
     public $error = '';
     public $userExists = false;
@@ -81,5 +80,4 @@ class UserModel
             return $this->error ='Please select your status';
         }
     }
-
 }
