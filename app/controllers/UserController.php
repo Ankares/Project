@@ -23,15 +23,13 @@ class UserController extends Controller
         $data = null;
         if (isset($_POST['email'])) {
             $this->user->setData($_POST);
-            $fileObj = $this->file->service($_FILES['file']);
             $this->repository->checkUser($this->user, $_POST['email']);
             $this->user->validation();
-            if (empty($this->user->error) && empty($fileObj->error)) {
-                $this->repository->add($this->user, $fileObj->file, $fileObj->size);
-                move_uploaded_file($_FILES['file']['tmp_name'], __DIR__ . '/../../public/userFiles/' . $_FILES['file']['name']);
+            if (empty($this->user->error)) {
+                $this->repository->add($this->user);
                 $data['success'] = 'User successfully added';
             } else {
-                $data['error'] = [$this->user->error, $fileObj->error];
+                $data['error'] = $this->user->error;
             }
         }
         $this->view('user/index', $data);
@@ -49,17 +47,31 @@ class UserController extends Controller
         $data = null;
         if (isset($_POST['id'])) {
             $this->user->setData($_POST);
+            $fileObj = $this->file->service($_FILES['file']);
             $this->repository->checkUser($this->user, $_POST['email'], $_POST['id']);
             $this->user->validation();
-            if (empty($this->user->error)) {
+            if (empty($this->user->error) && empty($fileObj->error)) {
                 $this->repository->updateUser($this->user, $_POST['id']);   
+                if($fileObj->file != '') {
+                    $pathForDB = $fileObj->moveFile($_FILES['file'], $fileObj->uniqName);
+                    $this->repository->addFile($_POST['id'], $fileObj->file, $pathForDB, $fileObj->size);
+                }
                 $data['success'] = 'Successfully updated';
             } else {
-                $data['error'] = $this->user->error;
+                $data['error'] = [$this->user->error, $fileObj->error];
             }            
         }
         $data['user'] = $this->repository->getDataByID($id);
+        $data['files'] = $this->repository->getUserFiles($id);
         $this->view('user/edit', $data);
+    }
+
+    public function editFiles($id)
+    {
+        $data = null;
+        $data['user'] = $this->repository->getDataByID($id);
+        $data['files'] = $this->repository->getUserFiles($id);
+        $this->view('user/editFiles', $data);
     }
 
     public function delete()
@@ -68,5 +80,13 @@ class UserController extends Controller
             $this->repository->deleteByID($_POST['delete']);
         }
         header('Location: /user/list');
+    }
+
+    public function deleteFiles()
+    {
+        if (isset($_POST['imageToDelete'])) {
+            $this->repository->deleteFileById($_POST['imageToDelete']);
+        }
+        header('Location: /user/editFiles/'.$_POST['idToDelete']);       
     }
 }

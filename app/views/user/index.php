@@ -11,7 +11,7 @@
 <body>
     <?php require_once 'public/blocks/header.php'?>
 
-    <form action="/user" method="post" class="form-control mt-1 p-4 mx-auto justify-content-center w-50 " enctype="multipart/form-data">  
+    <form action="/user" method="post" class="form-control mt-1 p-4 mx-auto justify-content-center w-50 ">  
         <h2 class="text-center">Add user</h2>
         <div class="form-group fs-4">
             <label class="mb-2">Email address:</label>
@@ -47,14 +47,9 @@
                 </option>
             </select>
         </div>
-        <div class="form-group mt-4">
-            <input type="file" class="form-control" name="file">
-        </div>
 
         <?php if(isset($data['error'])): ?>
-            <?php foreach($data['error'] as $error): ?>
-                <div class="error mt-3 fw-bold fs-4 text-danger"><?=$error?></div>
-            <?php endforeach; ?>
+            <div class="error mt-3 fw-bold fs-4 text-danger"><?=$data['error']?></div>
         <?php endif;?>
         <?php if(isset($data['success'])): ?>
             <div class="success mt-3 fw-bold fs-4 text-success "><?=$data['success'];?></div>

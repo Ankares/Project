@@ -22,7 +22,7 @@
                     <button class="btn btn-danger offset-md-9 offset-6 col-md-1 col-2">&times;</button>
                 </form>
 
-                <form action="/user/edit/<?=$data['user']['id']?>" method="post">                        
+                <form action="/user/edit/<?=$data['user']['id']?>" method="post" enctype="multipart/form-data">                        
                     <h4 class="col-12 ms-2 mt-4"><?='User: ' . $data['user']['email']?></h4>
                     <div class="row mx-3 mt-3">
                         <div class="col-md-3 col-6">
@@ -31,6 +31,7 @@
                             <label class="p-2 me-5">Surname:</label>
                             <label class="p-2 me-5">Gender:</label>   
                             <label class="p-2 me-5">Status:</label> 
+                            <label class="p-2 me-5">Files:</label>
                         </div>
                         <div class="col-md-9 col-6">
                             <input type="hidden" name="id" value="<?=$data['user']['id']?>">
@@ -54,12 +55,33 @@
                                     Inactive
                                 </option>
                             </select>
-                            <?php if (isset($data['error'])) : ?>
-                                <div class="error text-danger mt-3 fw-bold fs-4"><?=$data['error'];?></в>
+
+                            <?php if(empty($data['files'])):?>
+                                <p class="form-control-plaintext mt-2">
+                                    No files found
+                                </p>
+                            <?php else: ?>
+                                <a href="/user/editFiles/<?=$data['user']['id']?>" class="outfit btn btn-outline-primary p-2 mt-3 px-3">Edit files</a>
+                                <?php foreach($data['files'] as $file): ?>
+                                    <p class="form-control-plaintext mt-2">
+                                        <?=$file['file']?>
+                                    </p>
+                                <?php endforeach; ?>
                             <?php endif; ?>
-                            <?php if (isset($data['success'])) : ?>
-                                <div class="success text-success mt-3 fs-4 fw-bold"><?=$data['success'];?></div>
-                            <?php endif; ?>
+                            
+                            <div class="form-group mt-4">
+                                <input type="file" class="form-control" name="file">
+                            </div>
+
+                            <?php if(isset($data['error'])): ?>
+                                <?php foreach($data['error'] as $error): ?>
+                                    <div class="error mt-3 fw-bold fs-4 text-danger"><?=$error?></div>
+                                <?php endforeach; ?>
+                            <?php endif;?>
+                            <?php if(isset($data['success'])): ?>
+                                <div class="success mt-3 fw-bold fs-4 text-success "><?=$data['success'];?></div>
+                            <?php endif;?>
+
                         </div>
                     </div> 
                     <button class="outfit btn btn-primary offset-lg-10 offset-8 col-lg-2 col-4 mt-4 p-2">Save changes</button>

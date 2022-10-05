@@ -33,7 +33,6 @@
                                 <p class="me-5">Surname:</p>
                                 <p class="me-5">Gender:</p>   
                                 <p class="me-5">Status:</p> 
-                                <p class="me-5">Files:</p>
                             </div>
                             <div class="offset-2 offset-md-0 col-7 col-md-9">
                                 <input name="email" class="form-control-plaintext mb-2" disabled value="<?=$user['email']?>">
@@ -41,18 +40,6 @@
                                 <p name="surname" class= "me-5"><?=$user['surname']?></p>
                                 <p name="gender" class="me-5"><?=$user['gender']?></p>
                                 <p name="status" class="me-5 mb-3"><?=$user['status']?></p>
-                                
-                                <?php if($user['file'] != '') :?>
-                                    <?php $ext = pathinfo($user['file'], PATHINFO_EXTENSION)?>
-                                    <?php if($ext == 'jpg' || $ext == 'jpeg' || $ext = 'png'): ?>
-                                        <img src="/public/userFiles/<?=$user['file']?>" class="img-fluid">
-                                    <?php endif; ?>
-                                    <?php if($ext == 'txt' || $ext = 'docx' || $ext = 'doc') :?>
-                                        <p name="files" class="me-5"><?=$user['file']?></p>
-                                    <?php endif; ?>
-                                    <?php else:?>
-                                        <p name="files" class="me-5">There is no userFiles</p>
-                                <?php endif; ?>
                             </div>
                         </div> 
                     </form> 
