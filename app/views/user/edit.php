@@ -62,11 +62,9 @@
                                 </p>
                             <?php else: ?>
                                 <a href="/user/editFiles/<?=$data['user']['id']?>" class="outfit btn btn-outline-primary p-2 mt-3 px-3">Edit files</a>
-                                <?php foreach($data['files'] as $file): ?>
-                                    <p class="form-control-plaintext mt-2">
-                                        <?=$file['file']?>
-                                    </p>
-                                <?php endforeach; ?>
+                                <p class="form-control-plaintext mt-2">
+                                    Found <?=count($data['files'])?> files
+                                </p>
                             <?php endif; ?>
                             
                             <div class="form-group mt-4">
@@ -86,7 +84,7 @@
                     </div> 
                     <button class="outfit btn btn-primary offset-lg-10 offset-8 col-lg-2 col-4 mt-4 p-2">Save changes</button>
                 </form>
-                
+
             </li>
         </ul>
 
