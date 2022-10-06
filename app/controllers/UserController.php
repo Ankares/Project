@@ -8,6 +8,7 @@ use App\Models\Repositories\IUserProcessing;
 use App\Models\Repositories\UserRepository;
 use App\Models\UserModel;
 use App\Events\FileUploadEvent;
+use App\Logs\Logger;
 
 class UserController extends Controller
 {
@@ -15,7 +16,8 @@ class UserController extends Controller
     public function __construct(
         private UserModel $user,
         private UserRepository $repository,
-        private FileUploadEvent $file
+        private FileUploadEvent $file,
+        private Logger $logger
     ) {}
 
     public function index() 
@@ -55,10 +57,12 @@ class UserController extends Controller
                 if($fileObj->file != '') {
                     $pathForDB = $fileObj->moveFile($_FILES['file']);
                     $this->repository->addFile($_POST['id'], $fileObj->file, $pathForDB, $fileObj->size);
+                    $this->logger->info('', [$_FILES['file'], 'Info: File successfully added']);
                 }
                 $data['success'] = 'Successfully updated';
             } else {
                 $data['error'] = [$this->user->error, $fileObj->error];
+                $this->logger->error('', [$_FILES['file'], $fileObj->error]);
             }            
         }
         $data['user'] = $this->repository->getDataByID($id);

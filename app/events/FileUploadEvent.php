@@ -38,11 +38,11 @@ class FileUploadEvent
             if($file['tmp_name'] != '') {
                 $ext = @mime_content_type($file['tmp_name']);
                 if(!in_array($ext, $correctExtensions)) {
-                    $error = 'Files: Unsupported extension';
+                    $error = 'Warning: Unsupported extension';
                 } 
             }
             if($file['size'] >= $maxsize || $file['size'] == 0) {
-                $error = 'Files: Size should be less then 2mb';
+                $error = 'Warning: Size should be less then 2mb';
             }
         } 
         
