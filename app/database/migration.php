@@ -1,12 +1,12 @@
 <?php
+
 use App\Models\DB;
 
 require 'vendor/autoload.php';
 
 (Dotenv\Dotenv::createImmutable(__DIR__ . '\..\..'))->load();
 
-
-$db = DB::getInstance('localhost');
+$db = DB::getInstance();
 $files = getMigrationFiles($db);
 
 if (empty($files)) {
