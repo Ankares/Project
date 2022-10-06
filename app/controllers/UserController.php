@@ -53,7 +53,7 @@ class UserController extends Controller
             if (empty($this->user->error) && empty($fileObj->error)) {
                 $this->repository->updateUser($this->user, $_POST['id']);   
                 if($fileObj->file != '') {
-                    $pathForDB = $fileObj->moveFile($_FILES['file'], $fileObj->uniqName);
+                    $pathForDB = $fileObj->moveFile($_FILES['file']);
                     $this->repository->addFile($_POST['id'], $fileObj->file, $pathForDB, $fileObj->size);
                 }
                 $data['success'] = 'Successfully updated';
@@ -84,9 +84,12 @@ class UserController extends Controller
 
     public function deleteFiles()
     {
-        if (isset($_POST['imageToDelete'])) {
-            $this->repository->deleteFileById($_POST['imageToDelete']);
-        }
-        header('Location: /user/editFiles/'.$_POST['idToDelete']);       
+        if (isset($_POST['pathToDelete'])) {
+            $this->repository->deleteFileById($_POST['pathToDelete']);
+            $this->file->deleteFromDir($_POST['pathToDelete']);
+            $this->file->deleteEmptyDir($_POST['pathToDelete']);
+        } 
+            
+        header('Location: /user/editFiles/'.$_POST['userId']);       
     }
 }

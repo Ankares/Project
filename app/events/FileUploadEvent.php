@@ -7,54 +7,77 @@ class FileUploadEvent
     public function __construct(
         public $error = [],
         public $file = [],
-        public $uniqName = [],
         public $size = []
     ) {}
 
+    public function fileProccessing($file) {
+
+        $explodedName = explode('.', $file['name']);
+        $newInuqName = uniqid($explodedName[0]) . '.' . $explodedName[1];
+        $firstDir = strtolower(substr($newInuqName, 0, 2));
+        $secDir = strtolower(substr($newInuqName, 2, 2));
+        $fileSaveDir = __DIR__ . '/../../public/userFiles/'.$firstDir.'/'.$secDir;
+        $pathForDB = $firstDir . '/' . $secDir . '/' . $newInuqName; 
+
+        return [
+            'uniqName' => $newInuqName,
+            'firstDir' => $firstDir,
+            'secondDir' => $secDir,
+            'saveDir' => $fileSaveDir,
+            'pathForDB' => $pathForDB
+        ];
+    }
+
     public function service($file)
     {
+        $correctExtensions = ['image/jpeg', 'image/png', 'text/plain'];
         $maxsize = 2048000;
-        $currentSize = $file['size'];
-        $newInuqName = '';
         $error = '';
 
         if($file['name'] != '') {
-            $explodedName = explode('.', $file['name']);
-            $newInuqName = uniqid($explodedName[0]) . '.' . $explodedName[1];
             if($file['tmp_name'] != '') {
                 $ext = @mime_content_type($file['tmp_name']);
-                if($ext != 'image/jpeg' && $ext != 'image/png' && $ext != 'text/plain') {
+                if(!in_array($ext, $correctExtensions)) {
                     $error = 'Files: Unsupported extension';
                 } 
             }
-            if($currentSize >= $maxsize || $currentSize == 0) {
+            if($file['size'] >= $maxsize || $file['size'] == 0) {
                 $error = 'Files: Size should be less then 2mb';
             }
         } 
+        
         return new FileUploadEvent(
             $error,
             $file['name'],
-            $newInuqName,
-            $currentSize
+            $file['size']
         );
     }
 
-    public function moveFile($fileName, $uniqFileName) {
+    public function moveFile($fileName) {
 
-        $pathForDB = '';
-        $firstDir = strtolower(substr($uniqFileName, 0, 2));
-        $secDir = strtolower(substr($uniqFileName, 2, 2));
-        $fileSaveDir = __DIR__ . '/../../public/userFiles/'.$firstDir.'/'.$secDir;
-        if(is_dir($fileSaveDir)) {
-            move_uploaded_file($fileName['tmp_name'], $fileSaveDir.'/'.$uniqFileName);
+        $fileInfo = $this->fileProccessing($fileName);
+        if(is_dir($fileInfo['saveDir'])) {
+            move_uploaded_file($fileName['tmp_name'], $fileInfo['saveDir'].'/'.$fileInfo['uniqName']);
         }
         else {
-            mkdir($fileSaveDir, 0777, true);
-            move_uploaded_file($fileName['tmp_name'], $fileSaveDir.'/'.$uniqFileName);
+            mkdir($fileInfo['saveDir'], 0777, true);
+            move_uploaded_file($fileName['tmp_name'], $fileInfo['saveDir'].'/'.$fileInfo['uniqName']);
         }
-        
-        $pathForDB = $firstDir . '/' . $secDir . '/' . $uniqFileName; 
-        return $pathForDB;
-       
+
+        return $fileInfo['pathForDB'];
+    }
+
+    public function deleteFromDir($filePath) {
+        if($filePath != '') {
+            unlink(__DIR__.'/../../public/userFiles/'.$filePath);   
+        }
+    }
+
+    public function deleteEmptyDir($filePath) {
+            $path = explode('/', $filePath);
+            $firstDir = $path[0];
+            $secondDir = $path[1];
+            @rmdir(__DIR__.'/../../public/userFiles/'.$firstDir.'/'.$secondDir);
+            @rmdir(__DIR__.'/../../public/userFiles/'.$firstDir);
     }
 }

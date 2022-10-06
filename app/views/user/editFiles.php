@@ -21,8 +21,8 @@
                                 <hr>
                                 <form action="/user/deleteFiles" method="post" onsubmit="return confirm('Are you sure?');">
                                     <button class="btn btn-outline-danger offset-md-10 offset-8 col-md-2 col-4 mb-3">Delete</button>
-                                    <input type="hidden" name="imageToDelete" value="<?=$file['path']?>">
-                                    <input type="hidden" name="idToDelete" value="<?=$data['user']['id']?>">
+                                    <input type="hidden" name="pathToDelete" value="<?=$file['path']?>">
+                                    <input type="hidden" name="userId" value="<?=$data['user']['id']?>">
                                     <?php $ext = pathinfo($file['file'], PATHINFO_EXTENSION)?>
                                     <?php if($ext == 'txt' || $ext == 'docx'): ?>
                                         <p><?=$file['file']?></p>
