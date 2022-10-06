@@ -22,10 +22,6 @@
             <input type="text" name="name" class="form-control mb-2" placeholder="Enter your name" value="<? if (isset($_POST['name'])) echo $_POST['name'] ?>">  
         </div>
         <div class="form-group">
-            <label class="mb-2">Surname:</label>
-            <input type="text" name="surname" class="form-control mb-2" placeholder="Enter surname" value="<? if (isset($_POST['surname'])) echo $_POST['surname'] ?>">    
-        </div>
-        <div class="form-group">
             <label class="mb-2">Gender:</label>
             <select name="gender" class="form-select" value="<? if (isset($_POST['gender'])) echo $_POST['gender'] ?>">
                 <option value="male" <?php if (isset($_POST['gender']) && ($_POST['gender'] == 'male')) {echo "selected";}?>>
