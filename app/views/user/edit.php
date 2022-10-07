@@ -28,7 +28,6 @@
                         <div class="col-md-3 col-6">
                             <label class="p-2 me-5">Email:</label>
                             <label class="p-2 me-5">Name:</label>
-                            <label class="p-2 me-5">Surname:</label>
                             <label class="p-2 me-5">Gender:</label>   
                             <label class="p-2 me-5">Status:</label> 
                             <label class="p-2 me-5">Files:</label>
@@ -38,7 +37,6 @@
                             <!-- making remembering of previous values -->
                             <input name="email" class="form-control-plaintext px-2" value="<?=isset($_POST['email']) ? $_POST['email'] : $data['user']['email']?>">
                             <input name="name" class="form-control-plaintext px-2 mt-1" value="<?=isset($_POST['name']) ? $_POST['name'] : $data['user']['name']?>">
-                            <input name="surname" class="form-control-plaintext px-2" value="<?=isset($_POST['surname']) ? $_POST['surname'] : $data['user']['surname']?>">
                             <select name="gender" class="form-select mt-2" value="<?=isset($_POST['gender']) ? $_POST['gender'] : $data['user']['gender']?>">
                                 <option value="male" <?=isset($data['user']['gender']) && ($data['user']['gender'] == 'male') ? "selected" : ''?>>
                                     Male

@@ -6,7 +6,6 @@ class UserModel
 {  
     public $userData = [
         'name' => '',
-        'surname' => '',
         'email' => '',
         'gender' => '',
         'status' => ''
@@ -28,7 +27,7 @@ class UserModel
         if ($this->userExists != false) {
             return $this->error = 'User is already exist';
         }
-        foreach(['emailValidation', 'nameValidation', 'surnameValidation', 'genderValidation', 'statusValidation'] as $validator) {
+        foreach(['emailValidation', 'nameValidation', 'genderValidation', 'statusValidation'] as $validator) {
             $this->$validator();
             if($this->error) break;
         }
@@ -51,19 +50,9 @@ class UserModel
         if (empty($this->userData['name'])) {
             return $this->error = 'Name is empty';
         } 
-        if (!preg_match("/^[a-zA-Z]+$/i", $this->userData['name'])) {
+        if (!preg_match("/^([a-zA-Z]+) ([a-zA-Z]+)$/i", $this->userData['name'])) {
             return $this->error ='Name is incorrect. Please try again';
         }
-    }
-
-    private function surnameValidation() 
-    {
-        if (empty($this->userData['surname'])) {
-            return $this->error = 'Surname is empty';
-        } 
-        if (!preg_match("/^[a-zA-Z]+$/i", $this->userData['surname'])) {
-            return $this->error ='Surname is incorrect. Please try again';
-        }   
     }
 
     private function genderValidation()   

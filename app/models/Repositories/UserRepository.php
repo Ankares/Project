@@ -15,9 +15,9 @@ class UserRepository implements IUserProcessing{
 
     public function add(UserModel $user)
     {
-        $sql = 'INSERT INTO users(email, name, surname, gender, status) VALUES(:email, :name, :surname, :gender, :status)';
+        $sql = 'INSERT INTO users(email, name, gender, status) VALUES(:email, :name, :gender, :status)';
         $query = $this->db->prepare($sql);
-        $query->execute(['email'=>$user->userData['email'], 'name'=>$user->userData['name'], 'surname'=>$user->userData['surname'], 'gender'=>$user->userData['gender'], 'status'=>$user->userData['status']]);
+        $query->execute(['email'=>$user->userData['email'], 'name'=>$user->userData['name'], 'gender'=>$user->userData['gender'], 'status'=>$user->userData['status']]);
     }
 
     public function addFile($userId, $fileName, $path, $size) {
@@ -55,9 +55,9 @@ class UserRepository implements IUserProcessing{
 
     public function updateUser(UserModel $user, $id)
     {
-        $sql = "UPDATE users SET email = :email, name = :name, surname = :surname, gender = :gender, status = :status WHERE id = :id";
+        $sql = "UPDATE users SET email = :email, name = :name, gender = :gender, status = :status WHERE id = :id";
         $query = $this->db->prepare($sql);
-        $query->execute(['email'=>$user->userData['email'], 'name'=>$user->userData['name'], 'surname'=>$user->userData['surname'], 'gender'=>$user->userData['gender'], 'status'=>$user->userData['status'], 'id'=>$id]);
+        $query->execute(['email'=>$user->userData['email'], 'name'=>$user->userData['name'], 'gender'=>$user->userData['gender'], 'status'=>$user->userData['status'], 'id'=>$id]);
     }
 
     public function deleteByID($id)

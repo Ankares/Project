@@ -21,8 +21,6 @@ class FileUploadEvent
 
         return [
             'uniqName' => $newInuqName,
-            'firstDir' => $firstDir,
-            'secondDir' => $secDir,
             'saveDir' => $fileSaveDir,
             'pathForDB' => $pathForDB
         ];
@@ -30,7 +28,7 @@ class FileUploadEvent
 
     public function service($file)
     {
-        $correctExtensions = ['image/jpeg', 'image/png', 'text/plain'];
+        $correctExtensions = ['image/jpeg', 'image/png', 'text/plain', 'application/msword'];
         $maxsize = 2048000;
         $error = '';
 
@@ -77,7 +75,9 @@ class FileUploadEvent
             $path = explode('/', $filePath);
             $firstDir = $path[0];
             $secondDir = $path[1];
-            @rmdir(__DIR__.'/../../public/userFiles/'.$firstDir.'/'.$secondDir);
-            @rmdir(__DIR__.'/../../public/userFiles/'.$firstDir);
+            if(isset($firstDir) && isset($secondDir)) {
+                @rmdir(__DIR__.'/../../public/userFiles/'.$firstDir.'/'.$secondDir);
+                @rmdir(__DIR__.'/../../public/userFiles/'.$firstDir);
+            }
     }
 }
