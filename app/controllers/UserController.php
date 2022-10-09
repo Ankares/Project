@@ -8,7 +8,7 @@ use App\Models\Repositories\IUserProcessing;
 use App\Models\Repositories\UserRepository;
 use App\Models\UserModel;
 use App\Events\FileUploadEvent;
-use App\Logs\Logger;
+use App\Logs\LoggingFiles;
 
 class UserController extends Controller
 {
@@ -16,8 +16,8 @@ class UserController extends Controller
     public function __construct(
         private UserModel $user,
         private UserRepository $repository,
-        private FileUploadEvent $file,
-        private Logger $logger
+        private FileUploadEvent $fileUploader,
+        private LoggingFiles $fileLog
     ) {}
 
     public function index() 
@@ -49,20 +49,20 @@ class UserController extends Controller
         $data = null;
         if (isset($_POST['id'])) {
             $this->user->setData($_POST);
-            $fileObj = $this->file->service($_FILES['file']);
+            $fileInfo = $this->fileUploader->checkFile($_FILES['file']);
             $this->repository->checkUser($this->user, $_POST['email'], $_POST['id']);
             $this->user->validation();
-            if (empty($this->user->error) && empty($fileObj->error)) {
+            if (empty($this->user->error) && empty($fileInfo['error'])) {
                 $this->repository->updateUser($this->user, $_POST['id']);   
-                if($fileObj->file != '') {
-                    $pathForDB = $fileObj->moveFile($_FILES['file']);
-                    $this->repository->addFile($_POST['id'], $fileObj->file, $pathForDB, $fileObj->size);
-                    $this->logger->info('', [$_FILES['file'], 'Info: File successfully added']);
+                if($fileInfo['fileName'] != '') {
+                    $pathForDB = $this->fileUploader->moveFile($_FILES['file']);
+                    $this->repository->addFile($_POST['id'], $fileInfo['fileName'], $pathForDB, $fileInfo['fileSize']);
+                    $this->fileLog->info('', [$_FILES['file'], 'Info: File successfully added']);
                 }
                 $data['success'] = 'Successfully updated';
             } else {
-                $data['error'] = [$this->user->error, $fileObj->error];
-                $this->logger->error('', [$_FILES['file'], $fileObj->error]);
+                $data['error'] = [$this->user->error, $fileInfo['error']];
+                $this->fileLog->error('', [$_FILES['file'], $fileInfo['error']]);
             }            
         }
         $data['user'] = $this->repository->getDataByID($id);
@@ -90,8 +90,8 @@ class UserController extends Controller
     {
         if (isset($_POST['pathToDelete'])) {
             $this->repository->deleteFileById($_POST['pathToDelete']);
-            $this->file->deleteFromDir($_POST['pathToDelete']);
-            $this->file->deleteEmptyDir($_POST['pathToDelete']);
+            $this->fileUploader->deleteFromDir($_POST['pathToDelete']);
+            $this->fileUploader->deleteEmptyDir($_POST['pathToDelete']);
         } 
             
         header('Location: /user/editFiles/'.$_POST['userId']);       

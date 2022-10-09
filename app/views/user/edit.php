@@ -18,12 +18,12 @@
             <li class="list-group-item offset-md-2 offset-0 col-md-8 col-12 mb-4 fs-5 p-4">
                 <a href="/user/list" class="btn btn-outline-primary float-start col-md-2 col-4">Return</a> 
                 <form action="/user/delete" method="post" onsubmit="return confirm('Are you sure?');">
-                    <input type="hidden" name="delete" value="<?=$data['user']['id']?>">
+                    <input type="hidden" name="delete" value="<?=htmlspecialchars($data['user']['id'])?>">
                     <button class="btn btn-danger offset-md-9 offset-6 col-md-1 col-2">&times;</button>
                 </form>
 
-                <form action="/user/edit/<?=$data['user']['id']?>" method="post" enctype="multipart/form-data">                        
-                    <h4 class="col-12 ms-2 mt-4"><?='User: ' . $data['user']['email']?></h4>
+                <form action="/user/edit/<?=htmlspecialchars($data['user']['id'])?>" method="post" enctype="multipart/form-data">                        
+                    <h4 class="col-12 ms-2 mt-4"><?='User: ' . htmlspecialchars($data['user']['email'])?></h4>
                     <div class="row mx-3 mt-3">
                         <div class="col-md-3 col-6">
                             <label class="p-2 me-5">Email:</label>
@@ -33,11 +33,11 @@
                             <label class="p-2 me-5">Files:</label>
                         </div>
                         <div class="col-md-9 col-6">
-                            <input type="hidden" name="id" value="<?=$data['user']['id']?>">
+                            <input type="hidden" name="id" value="<?=htmlspecialchars($data['user']['id'])?>">
                             <!-- making remembering of previous values -->
-                            <input name="email" class="form-control-plaintext px-2" value="<?=isset($_POST['email']) ? $_POST['email'] : $data['user']['email']?>">
-                            <input name="name" class="form-control-plaintext px-2 mt-1" value="<?=isset($_POST['name']) ? $_POST['name'] : $data['user']['name']?>">
-                            <select name="gender" class="form-select mt-2" value="<?=isset($_POST['gender']) ? $_POST['gender'] : $data['user']['gender']?>">
+                            <input name="email" class="form-control-plaintext px-2" value="<?=isset($_POST['email']) ? htmlspecialchars($_POST['email']) : htmlspecialchars($data['user']['email'])?>">
+                            <input name="name" class="form-control-plaintext px-2 mt-1" value="<?=isset($_POST['name']) ? htmlspecialchars($_POST['name']) : htmlspecialchars( $data['user']['name'])?>">
+                            <select name="gender" class="form-select mt-2" value="<?=isset($_POST['gender']) ? htmlspecialchars($_POST['gender']) : htmlspecialchars($data['user']['gender'])?>">
                                 <option value="male" <?=isset($data['user']['gender']) && ($data['user']['gender'] == 'male') ? "selected" : ''?>>
                                     Male
                                 </option>
@@ -45,7 +45,7 @@
                                     Female
                                 </option>
                             </select>
-                            <select name="status" class="form-select mt-2" value="<?=isset($_POST['status']) ? $_POST['status'] : $data['user']['status']?>">
+                            <select name="status" class="form-select mt-2" value="<?=isset($_POST['status']) ? htmlspecialchars($_POST['status']) : htmlspecialchars($data['user']['status'])?>">
                                 <option value="active" <?=isset($data['user']['status']) && ($data['user']['status'] == 'active') ? "selected" : ''?>>
                                     Active
                                 </option>
@@ -59,9 +59,9 @@
                                     No files found
                                 </p>
                             <?php else: ?>
-                                <a href="/user/editFiles/<?=$data['user']['id']?>" class="outfit btn btn-outline-primary p-2 mt-3 px-3">Edit files</a>
+                                <a href="/user/editFiles/<?=htmlspecialchars($data['user']['id'])?>" class="outfit btn btn-outline-primary p-2 mt-3 px-3">Edit files</a>
                                 <p class="form-control-plaintext mt-2">
-                                    Found <?=count($data['files'])?> files
+                                    Found <?=htmlspecialchars(count($data['files']))?> files
                                 </p>
                             <?php endif; ?>
                             
@@ -71,11 +71,11 @@
 
                             <?php if(isset($data['error'])): ?>
                                 <?php foreach($data['error'] as $error): ?>
-                                    <div class="error mt-3 fw-bold fs-4 text-danger"><?=$error?></div>
+                                    <div class="error mt-3 fw-bold fs-4 text-danger"><?=htmlspecialchars($error)?></div>
                                 <?php endforeach; ?>
                             <?php endif;?>
                             <?php if(isset($data['success'])): ?>
-                                <div class="success mt-3 fw-bold fs-4 text-success "><?=$data['success'];?></div>
+                                <div class="success mt-3 fw-bold fs-4 text-success "><?=htmlspecialchars($data['success']);?></div>
                             <?php endif;?>
 
                         </div>

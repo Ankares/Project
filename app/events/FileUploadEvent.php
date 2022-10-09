@@ -4,13 +4,8 @@ namespace App\Events;
 
 class FileUploadEvent
 {
-    public function __construct(
-        public $error = [],
-        public $file = [],
-        public $size = []
-    ) {}
 
-    public function fileProccessing($file) {
+    private function fileProccessing($file) {
 
         $explodedName = explode('.', $file['name']);
         $newInuqName = uniqid($explodedName[0]) . '.' . $explodedName[1];
@@ -26,39 +21,39 @@ class FileUploadEvent
         ];
     }
 
-    public function service($file)
+    public function checkFile($file)
     {
         $correctExtensions = ['image/jpeg', 'image/png', 'text/plain', 'application/msword'];
         $maxsize = 2048000;
         $error = '';
 
         if($file['name'] != '') {
-            if($file['tmp_name'] != '') {
-                $ext = @mime_content_type($file['tmp_name']);
-                if(!in_array($ext, $correctExtensions)) {
-                    $error = 'Warning: Unsupported extension';
-                } 
-            }
             if($file['size'] >= $maxsize || $file['size'] == 0) {
                 $error = 'Warning: Size should be less then 2mb';
-            }
+            }   
         } 
+        if($file['tmp_name'] != '') {
+            $ext = @mime_content_type($file['tmp_name']);
+            if(!in_array($ext, $correctExtensions)) {
+                $error = 'Warning: Unsupported extension';
+            } 
+        }
         
-        return new FileUploadEvent(
-            $error,
-            $file['name'],
-            $file['size']
-        );
+        return [
+            'error' => $error,
+            'fileName' => $file['name'],
+            'fileSize' => $file['size']
+        ];
     }
 
     public function moveFile($fileName) {
 
         $fileInfo = $this->fileProccessing($fileName);
-        if(is_dir($fileInfo['saveDir'])) {
-            move_uploaded_file($fileName['tmp_name'], $fileInfo['saveDir'].'/'.$fileInfo['uniqName']);
+
+        try {
+            @mkdir($fileInfo['saveDir'], 0777, true);
         }
-        else {
-            mkdir($fileInfo['saveDir'], 0777, true);
+        finally {
             move_uploaded_file($fileName['tmp_name'], $fileInfo['saveDir'].'/'.$fileInfo['uniqName']);
         }
 

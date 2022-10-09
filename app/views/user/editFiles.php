@@ -14,21 +14,21 @@
             <h2 class="mt-5 mb-5 text-center">Editing files</h2>
                 <ul class="list-group">
                     <li class="list-group-item offset-md-2 offset-0 col-md-8 col-12 mb-4 fs-5 p-4">
-                    <a href="/user/edit/<?=$data['user']['id']?>" class="btn btn-outline-primary col-md-2 col-4 mb-4">Return</a> 
+                    <a href="/user/edit/<?=htmlspecialchars($data['user']['id'])?>" class="btn btn-outline-primary col-md-2 col-4 mb-4">Return</a> 
 
                         <?php foreach($data['files'] as $file): ?>
                             <div class="form-group">
                                 <hr>
                                 <form action="/user/deleteFiles" method="post" onsubmit="return confirm('Are you sure?');">
                                     <button class="btn btn-outline-danger offset-md-10 offset-8 col-md-2 col-4 mb-3">Delete</button>
-                                    <input type="hidden" name="pathToDelete" value="<?=$file['path']?>">
-                                    <input type="hidden" name="userId" value="<?=$data['user']['id']?>">
+                                    <input type="hidden" name="pathToDelete" value="<?=htmlspecialchars($file['path'])?>">
+                                    <input type="hidden" name="userId" value="<?=htmlspecialchars($data['user']['id'])?>">
                                     <?php $ext = pathinfo($file['file'], PATHINFO_EXTENSION)?>
                                     <?php if($ext == 'txt' || $ext == 'docx'): ?>
-                                        <p><?=$file['file']?></p>
+                                        <p><?=htmlspecialchars($file['file'])?></p>
                                     <?php else: ?>
-                                        <button type="button" class="trigger-menu btn btn-outline-secondary col-12 mb-3">Show image: <?=$file['file']?></button>
-                                        <img src="/public/userFiles/<?=$file['path']?>" class="img-thumbnail">
+                                        <button type="button" class="trigger-menu btn btn-outline-secondary col-12 mb-3">Show image: <?=htmlspecialchars($file['file'])?></button>
+                                        <img src="/public/userFiles/<?=htmlspecialchars($file['path'])?>" class="img-thumbnail">
                                     <?php endif; ?>
                                 </form>
                             </div>
