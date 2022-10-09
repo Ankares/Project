@@ -27,7 +27,7 @@ class UserModel
         if ($this->userExists != false) {
             return $this->error = 'User is already exist';
         }
-        foreach(['emailValidation', 'nameValidation', 'surnameValidation', 'genderValidation', 'statusValidation'] as $validator) {
+        foreach(['emailValidation', 'nameValidation', 'genderValidation', 'statusValidation'] as $validator) {
             $this->$validator();
             if($this->error) break;
         }
