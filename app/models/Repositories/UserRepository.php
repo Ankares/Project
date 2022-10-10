@@ -4,7 +4,7 @@ namespace App\Models\Repositories;
 use App\Models\DB;
 use App\Models\UserModel;
 
-class UserRepository implements IUserProcessing{
+class UserRepository implements Interfaces\IUserProcessing{
 
     private $db = null;
 

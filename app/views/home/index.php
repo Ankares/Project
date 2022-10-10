@@ -9,12 +9,16 @@
 </head>
 <body>
     <div class="container text-center mt-5">
-        <h1 class="display-3 mb-3">Welcome</h1>
-        <a class="link-primary fs-3" href="/user">Add user</a> <br><br>
-        <a class="link-primary fs-3" href="/user/list">Users list</a>
-    </div>
-    
-    
+    <h1 class="display-3 mb-3">Welcome</h1>
+    <a class="link-primary fs-3" href="/user">Add user</a> <br><br>
+    <a class="link-primary fs-3" href="/user/list">Users list</a> <br><br>
 
+    <?php if(!isset($_COOKIE['login'])):?>
+        <a class="link-primary fs-3" href="/login">Login</a> 
+    <?php else:?>
+        <a class="link-primary fs-3" href="/login/dashboard">Dashboard</a> 
+    <?php endif;?>
+
+    </div>
 </body>
 </html>
