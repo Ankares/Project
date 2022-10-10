@@ -3,8 +3,8 @@
 namespace App\Core;
 
 use App\Controllers\UserController;
-use App\Events\FileUploadEvent;
-use App\Logs\Logger;
+use App\Services\ServiceProvider;
+use App\Services\FileUpload;
 use App\Logs\LoggingFiles;
 use App\Models\UserModel;
 use App\Models\Repositories\IUserProcessing;
@@ -26,7 +26,7 @@ class App
     {
         $connection = ServiceProvider::getInstance();
         $connection->bind(IUserProcessing::class, static fn(ServiceProvider $provider) => $provider->make(UserModel::class));
-        $connection->bind(UserController::class, static fn(ServiceProvider $service) => new UserController($service->make(IUserProcessing::class), $service->make(UserRepository::class), $service->make(FileUploadEvent::class), $service->make(LoggingFiles::class)));
+        $connection->bind(UserController::class, static fn(ServiceProvider $service) => new UserController($service->make(IUserProcessing::class), $service->make(UserRepository::class), $service->make(FileUpload::class), $service->make(LoggingFiles::class)));
     }
 
     public function run() 

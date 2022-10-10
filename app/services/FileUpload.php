@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Events;
+namespace App\Services;
 
-class FileUploadEvent
+class FileUpload
 {
 
     private function fileProccessing($file) {

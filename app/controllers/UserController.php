@@ -1,13 +1,10 @@
 <?php
 
 namespace App\Controllers;
-use App\Models;
 use App\Core\Controller;
-use App\Core\ServiceProvider;
-use App\Models\Repositories\IUserProcessing;
 use App\Models\Repositories\UserRepository;
 use App\Models\UserModel;
-use App\Events\FileUploadEvent;
+use App\Services\FileUpload;
 use App\Logs\LoggingFiles;
 
 class UserController extends Controller
@@ -16,7 +13,7 @@ class UserController extends Controller
     public function __construct(
         private UserModel $user,
         private UserRepository $repository,
-        private FileUploadEvent $fileUploader,
+        private FileUpload $fileUploader,
         private LoggingFiles $fileLog
     ) {}
 
