@@ -11,19 +11,19 @@
 <body>
     <?php require_once 'public/blocks/header.php'?>
 
-    <form action="/user" method="post" class="form-control mt-5 p-4 mx-auto fs-4 justify-content-center w-50 ">  
+    <form action="/user" method="post" class="form-control mt-1 p-4 mx-auto justify-content-center w-50 ">  
         <h2 class="text-center">Add user</h2>
         <div class="form-group fs-4">
             <label class="mb-2">Email address:</label>
-            <input type="email" name="email" class="form-control mb-2" placeholder="Enter email" value="<? if (isset($_POST['email'])) echo $_POST['email'] ?>">  
+            <input type="email" name="email" class="form-control mb-2" placeholder="Enter email" value="<? if (isset($_POST['email'])) echo htmlspecialchars($_POST['email']) ?>">  
         </div>
         <div class="form-group fs-4">
             <label class="mb-2">Name:</label>
-            <input type="text" name="name" class="form-control mb-2" placeholder="Enter your name" value="<? if (isset($_POST['name'])) echo $_POST['name'] ?>">  
+            <input type="text" name="name" class="form-control mb-2" placeholder="Enter your name" value="<? if (isset($_POST['name'])) echo htmlspecialchars($_POST['name']) ?>">  
         </div>
         <div class="form-group fs-4">
             <label class="mb-2">Gender:</label>
-            <select name="gender" class="form-select" value="<? if (isset($_POST['gender'])) echo $_POST['gender'] ?>">
+            <select name="gender" class="form-select" value="<? if (isset($_POST['gender'])) echo htmlspecialchars($_POST['gender']) ?>">
                 <option value="male" <?php if (isset($_POST['gender']) && ($_POST['gender'] == 'male')) {echo "selected";}?>>
                     Male
                 </option>
@@ -43,11 +43,12 @@
                 </option>
             </select>
         </div>
+
         <?php if(isset($data['error'])): ?>
-            <div class="error mt-3 fw-bold fs-4 text-danger"><?=$data['error'];?></div>
+            <div class="error mt-3 fw-bold fs-4 text-danger"><?=htmlspecialchars($data['error'])?></div>
         <?php endif;?>
         <?php if(isset($data['success'])): ?>
-            <div class="success mt-3 fw-bold fs-4 text-success "><?=$data['success'];?></div>
+            <div class="success mt-3 fw-bold fs-4 text-success "><?=htmlspecialchars($data['success']);?></div>
         <?php endif;?>
       
         <button type="submit" class="btn btn-primary mt-3 mb-3 p-2 col-md-3 col-8">Add user</button>    

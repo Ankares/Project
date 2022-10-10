@@ -20,6 +20,12 @@ class UserRepository implements IUserProcessing{
         $query->execute(['email'=>$user->userData['email'], 'name'=>$user->userData['name'], 'gender'=>$user->userData['gender'], 'status'=>$user->userData['status']]);
     }
 
+    public function addFile($userId, $fileName, $path, $size) {
+        $sql = 'INSERT INTO files(userId, file, path, size) VALUES(:userId, :file, :path, :size)';
+        $query = $this->db->prepare($sql);
+        $query->execute(['userId'=>$userId, 'file'=>$fileName, 'path'=>$path, 'size'=>$size]);
+    }
+
     // checking for uniq email (id check for editing current user => can use own email, not others)
     public function checkUser(UserModel $user, $email, $id = '')
     {
@@ -42,6 +48,11 @@ class UserRepository implements IUserProcessing{
         return $sql->fetch(\PDO::FETCH_ASSOC);
     }
 
+    public function getUserFiles($id) {
+        $sql = $this->db->query("SELECT * FROM files WHERE userId = '$id'");
+        return $sql->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
     public function updateUser(UserModel $user, $id)
     {
         $sql = "UPDATE users SET email = :email, name = :name, gender = :gender, status = :status WHERE id = :id";
@@ -52,6 +63,11 @@ class UserRepository implements IUserProcessing{
     public function deleteByID($id)
     {
         $this->db->query("DELETE FROM users WHERE id = '$id'");
+    }
+
+    public function deleteFileById($filePath)
+    {
+        $this->db->query("DELETE FROM files WHERE path = '$filePath'");
     }
     
 }

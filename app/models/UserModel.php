@@ -8,7 +8,7 @@ class UserModel
         'name' => '',
         'email' => '',
         'gender' => '',
-        'status' => '',
+        'status' => ''
     ];
     public $error = '';
     public $userExists = false;
@@ -69,5 +69,4 @@ class UserModel
             return $this->error ='Please select your status';
         }
     }
-
 }

@@ -20,24 +20,24 @@
         <?php foreach($data['users'] as $user) : ?>
             <ul class="list-group">
                 <button class="trigger-menu btn btn-outline-secondary shadow-none offset-md-2 offset-0 col-md-8 col-12 mb-3">
-                    <h5>Show user: <?=$user['email']?></h5>
+                    <h5>Show user: <?=htmlspecialchars($user['email'])?></h5>
                 </button>
                 <li class="list-group-item offset-md-2 offset-0 col-md-8 col-12 mb-4 fs-5 p-4">
                     <form action="/user/list" method="post">                        
-                        <h4 class="col-md-10 col-8 float-start"><?php echo 'User: ' . $user['email']?></h4>
-                        <a href="/user/edit/<?=$user['id']?>" class="btn btn-primary col-md-2 col-4">Edit user</a> 
+                        <h4 class="col-md-10 col-8 float-start"><?php echo 'User: ' . htmlspecialchars($user['email'])?></h4>
+                        <a href="/user/edit/<?=htmlspecialchars($user['id'])?>" class="btn btn-primary col-md-2 col-4">Edit user</a> 
                         <div class="row mx-md-3 mx-0 mt-3">
                             <div class="col-3 col-md-3">
-                                <p class="me-5">Email:</p>
+                                <p class="mt-2 me-5">Email:</p>
                                 <p class="me-5">Name:</p>
                                 <p class="me-5">Gender:</p>   
                                 <p class="me-5">Status:</p> 
                             </div>
-                            <div class="offset-2 offset-md-0 col-7 col-md-9">
-                                <input name="email" class="form-control-plaintext mb-2" disabled value="<?=$user['email']?>">
-                                <p name="name" class="me-5" value=><?=$user['name']?></p>
-                                <p name="gender" class="me-5" value=><?=$user['gender']?></p>
-                                <p name="status" class="me-5" value=><?=$user['status']?></p>
+                            <div class="offset-2 offset-md-0 col-7 col-md-9">                          
+                                <input name="email" class="form-control-plaintext mb-2" disabled value="<?=htmlspecialchars($user['email'])?>">
+                                <p name="name" class="me-5"><?=htmlspecialchars($user['name'])?></p>
+                                <p name="gender" class="me-5"><?=htmlspecialchars($user['gender'])?></p>
+                                <p name="status" class="me-5 mb-3"><?=htmlspecialchars($user['status'])?></p>
                             </div>
                         </div> 
                     </form> 
