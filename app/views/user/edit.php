@@ -34,7 +34,7 @@
                         </div>
                         <div class="col-md-9 col-6">
                             <input type="hidden" name="id" value="<?=htmlspecialchars($data['user']['id'])?>">
-                            <!-- making remembering of previous values -->
+                            <!-- making remembering of previous values -->                         
                             <input name="email" class="form-control-plaintext px-2" value="<?=isset($_POST['email']) ? htmlspecialchars($_POST['email']) : htmlspecialchars($data['user']['email'])?>">
                             <input name="name" class="form-control-plaintext px-2 mt-1" value="<?=isset($_POST['name']) ? htmlspecialchars($_POST['name']) : htmlspecialchars( $data['user']['name'])?>">
                             <select name="gender" class="form-select mt-2" value="<?=isset($_POST['gender']) ? htmlspecialchars($_POST['gender']) : htmlspecialchars($data['user']['gender'])?>">
