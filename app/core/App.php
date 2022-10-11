@@ -12,6 +12,8 @@ use App\Models\LoginModel;
 use App\Models\Repositories\Interfaces\IUserProcessing;
 use App\Models\Repositories\LoginRepository;
 use App\Models\Repositories\UserRepository;
+use Twig\Loader\FilesystemLoader;
+use Twig\Environment;
 
 class App
 {
@@ -30,7 +32,10 @@ class App
         $connection = ServiceProvider::getInstance();
         $connection->bind(IUserProcessing::class, static fn(ServiceProvider $provider) => $provider->make(UserModel::class));
         $connection->bind(UserController::class, static fn(ServiceProvider $service) => new UserController($service->make(IUserProcessing::class), $service->make(UserRepository::class), $service->make(FileUpload::class), $service->make(LoggingFiles::class)));
-        $connection->bind(LoginController::class, static fn(ServiceProvider $service) => new LoginController($service->make(LoginModel::class), $service->make(LoginRepository::class)));
+        $connection->bind(LoginController::class, static fn(ServiceProvider $service) => new LoginController($service->make(LoginModel::class), $service->make(LoginRepository::class), $service->make(Environment::class)));
+        $connection->bind(Environment::class, static fn() => new Environment(new FilesystemLoader('app/views'), [
+            'cache' => 'app/views/compilation_cache',
+        ]));
     }
 
     public function run() 

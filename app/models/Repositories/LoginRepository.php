@@ -3,8 +3,9 @@
 namespace App\Models\Repositories;
 use App\Models\DB;
 use App\Models\LoginModel;
+use App\Models\Repositories\Interfaces\ILoginProcessing;
 
-class LoginRepository
+class LoginRepository implements ILoginProcessing
 {
     private $db = null;
 
@@ -24,23 +25,29 @@ class LoginRepository
         }
     }
 
-    public function getUser()
+    public function getUserBySession()
     {
-        $email = $_COOKIE['login'];
+        $id = $_SESSION['user'];
+        $sql = $this->db->query("SELECT * FROM regUsers WHERE id = '$id'");
+        return $sql->fetch(\PDO::FETCH_ASSOC);
+    }
+    
+    public function getUserByEmail($email)
+    {
         $sql = $this->db->query("SELECT * FROM regUsers WHERE email = '$email'");
         return $sql->fetch(\PDO::FETCH_ASSOC);
     }
 
-    public function auth($email) 
+    public function auth($id) 
     {
-        setcookie('login', $email, time() + 3600 * 24, '/');
-        header('Location: /login/dashboard');
+        $_SESSION['user'] = $id;
+        header('Location: /login/dashboard'); 
     }
 
     public function logOut() 
     {
-        setcookie('login', $_COOKIE['login'], time() - 3600 * 24, '/');
-        unset($_COOKIE['login']);
-        header('Location: /login');
+        unset($_SESSION['user']);
+        header('Location: /login/index');
+        session_destroy();
     }
 }

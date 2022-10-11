@@ -1,3 +1,4 @@
 /databases/
 .env
 /vendor
+/app/views/compilation_cache

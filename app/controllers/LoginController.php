@@ -2,44 +2,53 @@
 
 namespace App\Controllers;
 
+session_start();
+
 use App\Core\Controller;
 use App\Models\LoginModel;
 use App\Models\Repositories\LoginRepository;
+use Twig\Environment;
 
 class LoginController extends Controller
 {
     public function __construct(
         private LoginModel $user,
-        private LoginRepository $repository
+        private LoginRepository $repository,
+        private Environment $twig
     ) {}
     
     public function index()
     {
-        $data = null;
-        if(isset($_POST['email'])) {
+        $error = null;
+        if (isset($_POST['email'])) {
             $this->user->setData($_POST);
             $this->repository->checkUser($this->user, $_POST['email'], $_POST['password']);
             $this->user->validation();
-            if(empty($this->user->error)) {
-                $this->repository->auth($_POST['email']);
-                $data['success'] = 'Successfull authorization';
+            if (empty($this->user->error)) {
+                $currentUser = $this->repository->getUserByEmail($_POST['email']);
+                $this->repository->auth($currentUser['id']);
             } else {
-                $data['error'] = $this->user->error;
+                $error = $this->user->error;
             }
         }
-        $this->view('login/index', $data);
+        if (isset($_SESSION['user'])) {
+            header('Location: /login/dashboard');
+        }
+        echo $this->twig->render('/login/index.php', ["error" => $error]);
     }
 
     public function dashboard()
     {
-        $data = null;
-        if (isset($_COOKIE['login'])) {
-            $data['user'] = $this->repository->getUser();
+        $user = null;
+        if (isset($_SESSION['user'])) {
+            $user = $this->repository->getUserBySession();  
+        } else {
+            header('Location: /login/index');
         }
         if (isset($_POST['logout'])) {
             $this->repository->logOut();
             exit();
         }
-        $this->view('login/dashboard', $data);
+        echo $this->twig->render('/login/dashboard.php', ["user" => $user]);
     }
 }
