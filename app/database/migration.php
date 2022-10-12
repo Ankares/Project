@@ -12,7 +12,7 @@ $files = getMigrationFiles($db);
 if (empty($files)) {
     echo 'Data base does not need an update';
 } else {
-    foreach($files as $file) {
+    foreach ($files as $file) {
         migrate($db, $file);
         echo basename($file) . ' ';
     }
@@ -20,7 +20,8 @@ if (empty($files)) {
     echo '---Mirgation done.';
 }
 
-function getMigrationFiles($db) {
+function getMigrationFiles($db)
+{
     $sqlDir = str_replace('\\', '/', realpath(dirname(__FILE__)) . '/');
     $sqlFiles = glob($sqlDir . 'sql/*.sql');
 
@@ -29,23 +30,24 @@ function getMigrationFiles($db) {
     $user = $query->fetch(PDO::FETCH_ASSOC);
     $migration = !$user;
 
-    if($migration) {
+    if ($migration) {
         return $sqlFiles;
     }
 
-    $versions = array();
+    $versions = [];
     $sql = 'SELECT `name` FROM `versions`';
     $query = $db->query($sql);
-    $data= $query->fetchAll(PDO::FETCH_ASSOC);
+    $data = $query->fetchAll(PDO::FETCH_ASSOC);
 
-    foreach($data as $row) {
+    foreach ($data as $row) {
         array_push($versions, $sqlDir . 'sql/' . $row['name']);
     }
 
     return array_diff($sqlFiles, $versions);
 }
 
-function migrate($db, $file) {
+function migrate($db, $file)
+{
     $sqlFile = file_get_contents($file);
     $sql = "$sqlFile";
     $db->query($sql);

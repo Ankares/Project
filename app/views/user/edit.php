@@ -36,20 +36,20 @@
                             <input type="hidden" name="id" value="<?=htmlspecialchars($data['user']['id'])?>">
                             <!-- making remembering of previous values -->
                             <input name="email" class="form-control-plaintext px-2" value="<?=isset($_POST['email']) ? htmlspecialchars($_POST['email']) : htmlspecialchars($data['user']['email'])?>">
-                            <input name="name" class="form-control-plaintext px-2 mt-1" value="<?=isset($_POST['name']) ? htmlspecialchars($_POST['name']) : htmlspecialchars( $data['user']['name'])?>">
+                            <input name="name" class="form-control-plaintext px-2 mt-1" value="<?=isset($_POST['name']) ? htmlspecialchars($_POST['name']) : htmlspecialchars($data['user']['name'])?>">
                             <select name="gender" class="form-select mt-2" value="<?=isset($_POST['gender']) ? htmlspecialchars($_POST['gender']) : htmlspecialchars($data['user']['gender'])?>">
-                                <option value="male" <?=isset($data['user']['gender']) && ($data['user']['gender'] == 'male') ? "selected" : ''?>>
+                                <option value="male" <?=isset($data['user']['gender']) && ($data['user']['gender'] == 'male') ? 'selected' : ''?>>
                                     Male
                                 </option>
-                                <option value="female" <?=isset($data['user']['gender']) && ($data['user']['gender'] == 'female') ? "selected" : ''?>>
+                                <option value="female" <?=isset($data['user']['gender']) && ($data['user']['gender'] == 'female') ? 'selected' : ''?>>
                                     Female
                                 </option>
                             </select>
                             <select name="status" class="form-select mt-2" value="<?=isset($_POST['status']) ? htmlspecialchars($_POST['status']) : htmlspecialchars($data['user']['status'])?>">
-                                <option value="active" <?=isset($data['user']['status']) && ($data['user']['status'] == 'active') ? "selected" : ''?>>
+                                <option value="active" <?=isset($data['user']['status']) && ($data['user']['status'] == 'active') ? 'selected' : ''?>>
                                     Active
                                 </option>
-                                <option  value="inactive" <?=isset($data['user']['status']) && ($data['user']['status'] == 'inactive') ? "selected" : ''?>>
+                                <option  value="inactive" <?=isset($data['user']['status']) && ($data['user']['status'] == 'inactive') ? 'selected' : ''?>>
                                     Inactive
                                 </option>
                             </select>

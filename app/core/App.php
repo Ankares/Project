@@ -2,10 +2,13 @@
 
 namespace App\Core;
 
+session_start();
+
 use App\Controllers\LoginController;
 use App\Controllers\UserController;
 use App\Services\ServiceProvider;
 use App\Services\FileUpload;
+use App\Services\LoginService;
 use App\Logs\LoggingFiles;
 use App\Models\UserModel;
 use App\Models\LoginModel;
@@ -17,8 +20,8 @@ use Twig\Environment;
 
 class App
 {
-    const DEFAULT_CONTROLLER = 'Home';
-    const DEFAULT_METHOD = 'index';
+    public const DEFAULT_CONTROLLER = 'Home';
+    public const DEFAULT_METHOD = 'index';
 
     public function parseURL()
     {
@@ -30,17 +33,16 @@ class App
     private function bootstrap()
     {
         $connection = ServiceProvider::getInstance();
-        $connection->bind(IUserProcessing::class, static fn(ServiceProvider $provider) => $provider->make(UserModel::class));
-        $connection->bind(UserController::class, static fn(ServiceProvider $service) => new UserController($service->make(IUserProcessing::class), $service->make(UserRepository::class), $service->make(FileUpload::class), $service->make(LoggingFiles::class)));
-        $connection->bind(LoginController::class, static fn(ServiceProvider $service) => new LoginController($service->make(LoginModel::class), $service->make(LoginRepository::class), $service->make(Environment::class)));
-        $connection->bind(Environment::class, static fn() => new Environment(new FilesystemLoader('app/views'), [
-            'cache' => 'app/views/compilation_cache',
-        ]));
+        $connection->bind(IUserProcessing::class, static fn (ServiceProvider $provider) => $provider->make(UserModel::class));
+        $connection->bind(UserController::class, static fn (ServiceProvider $service) => new UserController($service->make(IUserProcessing::class), $service->make(UserRepository::class), $service->make(FileUpload::class), $service->make(LoggingFiles::class)));
+        $connection->bind(LoginService::class, static fn (ServiceProvider $service) => new LoginService($service->make(LoginRepository::class)));
+        $connection->bind(Environment::class, static fn () => new Environment(new FilesystemLoader('app/views')));
+        $connection->bind(LoginController::class, static fn (ServiceProvider $service) => new LoginController($service->make(LoginModel::class), $service->make(LoginRepository::class), $service->make(LoginService::class), $service->make(Environment::class)));
     }
 
-    public function run() 
+    public function run()
     {
-        $controllerName =  self::DEFAULT_CONTROLLER;
+        $controllerName = self::DEFAULT_CONTROLLER;
         $methodName = self::DEFAULT_METHOD;
 
         $this->bootstrap();

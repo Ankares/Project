@@ -29,16 +29,15 @@ const successMessage = (messageSelector) => {
     };
 };
 
-const checkLoginForm = (inputs=[], buttonDiv) => {
-    var btnDiv = document.querySelector(buttonDiv);
+// displaying button only when all inputs are filled
+const checkLoginForm = (inputs=[], button) => {
+    var btn = document.querySelector(button);
+    var valid = true;
     inputs.forEach(element => {
         var field = document.querySelector(element);
-        if(field.value == '') {
-            btnDiv.innerHTML = '';
-        } else {
-            btnDiv.innerHTML = '<button type="submit" class="displayButton btn btn-primary mt-3 mb-3 p-2 col-md-3 col-8">Login</button>';
-        }    
+        field.value == '' ? valid = false : '';  
     });
+    valid == true ? btn.classList.remove('d-none') : btn.classList.add('d-none'); 
 }
 
 menu('.trigger-menu');

@@ -8,7 +8,7 @@
     <title>Users list</title>
 </head>
 <body>
-    <?php require_once "public/blocks/header.php"?>
+    <?php require_once 'public/blocks/header.php'?>
     
     <div class="container">
         <h2 class="mt-5 mb-5 text-center">All users</h2>
@@ -46,7 +46,7 @@
         <?php endforeach; ?>
     </div>
 
-    <?php require_once "public/blocks/footer.php"?>
+    <?php require_once 'public/blocks/footer.php'?>
     <script src="/app/js/script.js"></script>
 </body>
 </html>

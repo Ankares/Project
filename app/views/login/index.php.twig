@@ -5,7 +5,7 @@
 {% block body %}
     <a class="btn btn-outline-primary m-4" href="/home">Главная</a>
     <div class="container p-4">
-        <form action="/login" method="post" onchange="checkLoginForm(['.inp_email', '.inp_pass'], '.forButton')" class="form-control mt-1 p-4 mx-auto justify-content-center w-50 ">  
+        <form action="/login" method="post" oninput="checkLoginForm(['.inp_email', '.inp_pass'], '.displayButton')" class="form-control mt-1 p-4 mx-auto justify-content-center w-50 ">  
             <h2 class="text-center mb-4">Login</h2>
             <div class="form-group fs-4">
                 <label class="mb-2">Email:</label>
@@ -19,10 +19,8 @@
             {% if error %}
                 <div class="error mt-3 fw-bold fs-4 text-danger">{{error|escape}}</div>
             {% endif %}
-        
-            <div class="forButton">
-
-            </div>
+         
+            <button type="submit" class="displayButton d-none btn btn-primary mt-3 mb-3 p-2 col-md-3 col-8">Login</button>
         </form>
     </div>
 {% endblock %}
