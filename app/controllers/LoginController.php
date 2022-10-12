@@ -37,7 +37,7 @@ class LoginController extends Controller
 
             return;
         }
-        echo $this->twig->render('/login/index.php.twig', ['error' => $error]);
+        echo $this->twig->render('/login/index.php.twig', ['error' => $error, 'post' => $_POST]);
     }
 
     public function dashboard()

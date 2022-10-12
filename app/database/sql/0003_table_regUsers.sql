@@ -1,8 +1,9 @@
 CREATE TABLE IF NOT EXISTS regUsers (
 	id INT(10) auto_increment NOT NULL,
-	email VARCHAR(100) NOT NULL,
+	email VARCHAR(100) UNIQUE NOT NULL,
 	name VARCHAR(100) NOT NULL,
-	password VARCHAR(100) NOT NULL,
+	password CHAR(100) NOT NULL,
+	created_date TIMESTAMP DEFAULT current_timestamp,
 	PRIMARY KEY (id)
 )
 ENGINE = innodb
