@@ -24,7 +24,7 @@ class LoginController extends Controller
         if (isset($_POST['email'])) {
             $this->user->setData($_POST);
             $this->loginService->checkUser($this->user, $_POST['email'], $_POST['password']);
-            $this->user->validation();
+            $this->user->loginValidation();
             if (empty($this->user->error)) {
                 $currentUser = $this->repository->getUserByEmail($_POST['email']);
                 $this->loginService->auth($currentUser['id']);
@@ -38,6 +38,28 @@ class LoginController extends Controller
             return;
         }
         echo $this->twig->render('/login/index.php.twig', ['error' => $error, 'post' => $_POST]);
+    }
+
+    public function registration() 
+    {   
+        $success = null;
+        $error = null;
+        if(isset($_POST['email'])) {
+            $this->user->setData($_POST);
+            $this->user->registerValidation();
+            if (empty($this->user->error)) {
+                $this->loginService->registerUser($this->user);
+                $success = 'Successful registration';
+            } else {
+                $error = $this->user->error;
+            }
+        }
+        if (isset($_SESSION['user'])) {
+            header('Location: /login/dashboard');
+
+            return;
+        }
+        echo $this->twig->render('/login/registration.php.twig', ['success' => $success, 'error' => $error, 'post' => $_POST]);
     }
 
     public function dashboard()

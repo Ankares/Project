@@ -12,6 +12,12 @@ class LoginService
     ) {
     }
 
+    public function registerUser(LoginModel $user) 
+    {
+        $user->userData['password'] = password_hash($user->userData['password'], PASSWORD_DEFAULT);
+        $this->repository->addUser($user);   
+    }
+
     public function checkUser(LoginModel $validationFields, $email, $password)
     {
         $userfromDB = $this->repository->getUserByEmail($email);

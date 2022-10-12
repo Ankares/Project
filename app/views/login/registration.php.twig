@@ -1,0 +1,50 @@
+{% extends '/layout/layout.html.twig' %}
+
+{% block title %}
+    Registration
+{% endblock %}
+
+{% block body %}
+
+    <a class="btn btn-outline-primary m-4" href="/home">Главная</a>
+    <form action="/login/registration" method="post" class="form-control mt-1 p-4 mx-auto justify-content-center w-50 ">  
+        <h2 class="text-center">Registration</h2>
+        <div class="form-group fs-4">
+            <label class="mb-2">Name:</label>
+            <input type="text" name="name" class="form-control mb-2" placeholder="Enter your name" value="{% if post['name'] %}{{post['name']|escape}}{% endif %}">  
+        </div>
+        <div class="form-group fs-4">
+            <label class="mb-2">Email address:</label>
+            <input type="email" name="email" class="form-control mb-2" placeholder="Enter email" value="{% if post['email'] %}{{post['email']|escape}}{% endif %} ">  
+        </div>
+         <div class="form-group fs-4">
+            <label class="mb-2">Repeat email:</label>
+            <input type="email" name="repeatEmail" class="form-control mb-2" placeholder="Repeat email" value="{% if post['repeatEmail'] %}{{post['repeatEmail']|escape}}{% endif %} ">  
+        </div>
+         <div class="form-group fs-4">
+            <label class="mb-2">Password:</label>
+            <input type="password" name="password" class="form-control mb-2" placeholder="Enter password" value="{% if post['password'] %}{{post['password']|escape}}{% endif %}">  
+        </div>
+        <div class="form-group fs-4">
+            <label class="mb-2">Repeat password:</label>
+            <input type="password" name="repeatPassword" class="form-control mb-2" placeholder="Repeat password" value="{% if post['repeatPassword'] %}{{post['repeatPassword']|escape}}{% endif %}">  
+        </div>
+    
+        {% if error %}
+            <div class="error mt-3 fw-bold fs-4 text-danger">
+                {{error|escape}}
+            </div>
+        {% endif %}
+        {% if success %}
+            <div class="success mt-3 fw-bold fs-4 text-success">
+                {{success|escape}}
+            </div>
+        {% endif %}
+      
+        <button type="submit" class="btn btn-primary mt-3 mb-3 p-2 col-md-4 col-8">Registration</button>    
+    </form>
+{% endblock %}
+
+{%  block js %}
+    <script src="/app/js/script.js"></script>
+{% endblock %}
