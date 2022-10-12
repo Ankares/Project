@@ -12,7 +12,6 @@ class LoginModel
         'repeatPassword' => ''
     ];
     public $error = '';
-    public $userExist = true;
     public $passwordVeryfied = true;
 
     public function setData($data)
@@ -22,35 +21,30 @@ class LoginModel
         }
     }
 
-    public function loginValidation(): string
-    {
-        foreach (['emailValidation','passwordValidation'] as $validator) {
+    private function validation($array) {
+        foreach($array as $validator) {
             $this->$validator();
             if ($this->error) {
                 break;
             }
         }
-
         return $this->error;
     }
-
-    public function registerValidation(): string
+    
+    public function loginValidation()
     {
-        foreach (['nameValidation', 'matchingEmail', 'emailValidation','matchingPassword', 'passwordValidation'] as $validator) {
-            $this->$validator();
-            if ($this->error) {
-                break;
-            }
-        }
+        $this->validation(['emailValidation','passwordValidation']);        
+    }
 
-        return $this->error;
+    public function registerValidation()
+    {
+        $this->validation(['nameValidation', 'matchingEmail', 'emailValidation','matchingPassword', 'passwordValidation']);
     }
 
     private function emailValidation()
     {
         empty($this->userData['email']) ? $this->error = 'Email is empty' : '';
         !preg_match("/^[a-zA-Z0-9_\-.]+@[a-zA-Z0-9\-]+\.(ru|com)$/", $this->userData['email']) ? $this->error = 'Email is incorrect. Please try again' : '';
-        $this->userExist == false ? $this->error = 'User is not found' : '';
     }
 
     private function matchingEmail()
