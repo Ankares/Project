@@ -15,7 +15,7 @@ class LoginRepository implements ILoginProcessing
         $this->db = DB::getInstance();
     }
 
-    public function addUser(LoginModel $user, $hashedPassword) 
+    public function addUser(LoginModel $user, $hashedPassword)
     {
         $sql = 'INSERT INTO regUsers(email, name, password) VALUES(:email, :name, :password)';
         $query = $this->db->prepare($sql);

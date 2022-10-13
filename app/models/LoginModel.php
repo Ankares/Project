@@ -9,9 +9,15 @@ class LoginModel
         'email' => '',
         'repeatEmail' => '',
         'password' => '',
-        'repeatPassword' => ''
+        'repeatPassword' => '',
     ];
-    public $error = '';
+    public $error = [
+        'nameError' => '',
+        'emailError' => '',
+        'repeatEmailError' => '',
+        'passwordError' => '',
+        'repeatPasswordError' => '',
+    ];
     public $passwordVeryfied = true;
 
     public function setData($data)
@@ -21,54 +27,64 @@ class LoginModel
         }
     }
 
-    private function validation($array) {
-        foreach($array as $validator) {
+    private function validation($array)
+    {
+        foreach ($array as $validator) {
             $this->$validator();
-            if ($this->error) {
-                break;
-            }
         }
+
         return $this->error;
     }
-    
+
     public function loginValidation()
     {
-        $this->validation(['emailValidation','passwordValidation']);        
+        $this->validation(['emailValidation', 'passwordValidation']);
     }
 
     public function registerValidation()
     {
-        $this->validation(['nameValidation', 'matchingEmail', 'emailValidation','matchingPassword', 'passwordValidation']);
+        $this->validation(['nameValidation', 'matchingEmail', 'emailValidation', 'matchingPassword', 'passwordValidation']);
+    }
+
+    public function checkErrors()
+    {
+        $emptyErrors = true;
+        foreach ($this->error as $k => $v) {
+            $v != '' ? $emptyErrors = false : '';
+        }
+        if ($emptyErrors == true) {
+            return 'no errors';
+        }
     }
 
     private function emailValidation()
     {
-        empty($this->userData['email']) ? $this->error = 'Email is empty' : '';
-        !preg_match("/^[a-zA-Z0-9_\-.]+@[a-zA-Z0-9\-]+\.(ru|com)$/", $this->userData['email']) ? $this->error = 'Email is incorrect. Please try again' : '';
+        !preg_match("/^[a-zA-Z0-9_\-.]+@[a-zA-Z0-9\-]+\.(ru|com)$/", $this->userData['email']) ? $this->error['emailError'] = 'Email is incorrect. Please try again' : '';
+        empty($this->userData['email']) ? $this->error['emailError'] = 'Email is empty' : '';
     }
 
     private function matchingEmail()
     {
-        $this->userData['email'] !== $this->userData['repeatEmail'] ? $this->error = 'Email does not match' : '';
+        $this->userData['email'] !== $this->userData['repeatEmail'] ? $this->error['repeatEmailError'] = 'Email does not match' : '';
     }
 
     private function nameValidation()
     {
-        empty($this->userData['name']) ? $this->error = 'Name is empty' : '';
-        !preg_match('/^([a-zA-Z]+) ([a-zA-Z]+)$/i', $this->userData['name']) ? $this->error = 'Name is incorrect. Please try again' : '';
+        !preg_match('/^([a-zA-Z]+) ([a-zA-Z]+)$/i', $this->userData['name']) ? $this->error['nameError'] = 'Name is incorrect. Please try again' : '';
+        empty($this->userData['name']) ? $this->error['nameError'] = 'Name is empty' : '';
     }
 
     private function passwordValidation()
     {
-        empty($this->userData['password']) ? $this->error = 'Password is empty' : '';
-        $this->passwordVeryfied == false ? $this->error = 'Password is incorrect. Please try again' : '';
+        $this->passwordVeryfied == false ? $this->error['passwordError'] = 'Password is incorrect. Please try again' : '';
+        empty($this->userData['password']) ? $this->error['passwordError'] = 'Password is empty' : '';
     }
 
     private function matchingPassword()
     {
-        $this->userData['password'] !== $this->userData['repeatPassword'] ? $this->error = 'Password does not match' : '';  
-        !preg_match("/[\'^£$%&*()}{@#~?><>,|=_+!-]/", $this->userData['password']) ? $this->error = 'Password should contain special characters' : '';
-        !preg_match("/[A-Z]/", $this->userData['password']) ? $this->error = 'Password should contain english capital character' : '';
-        !preg_match("/[0-9]/", $this->userData['password']) ? $this->error = 'Password should contain digits' : '';
+        !preg_match("/[\'^£$%&*()}{@#~?><>,|=_+!-]/", $this->userData['password']) ? $this->error['passwordError'] = 'Password should contain special characters' : '';
+        !preg_match('/[A-Z]/', $this->userData['password']) ? $this->error['passwordError'] = 'Password should contain english capital character' : '';
+        !preg_match('/[0-9]/', $this->userData['password']) ? $this->error['passwordError'] = 'Password should contain digits' : '';
+        $this->userData['password'] !== $this->userData['repeatPassword'] ? $this->error['repeatPasswordError'] = 'Password does not match' : '';
     }
 }

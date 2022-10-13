@@ -14,15 +14,12 @@
                     {{post['email']|escape}}
                 {% endif %} ">  
             </div>
+            <p class="error mt-3 fw-bold fs-5 text-danger">{{errors['emailError']|escape}}</p>
             <div class="form-group fs-4">
                 <label class="mb-2">Password:</label>
                 <input type="password" name="password" class="inp_pass form-control mb-2" placeholder="Enter your password">  
             </div>
-            
-            {% if error %}
-                <div class="error mt-3 fw-bold fs-4 text-danger">{{error|escape}}</div>
-            {% endif %}
-         
+            <p class="error mt-3 fw-bold fs-5 text-danger">{{errors['passwordError']|escape}}</p>
             <button type="submit" class="displayButton d-none btn btn-primary mt-3 mb-3 p-2 col-md-3 col-8">Login</button>
         </form>
     </div>
