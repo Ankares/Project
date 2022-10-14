@@ -25,7 +25,7 @@ class LoginController extends Controller
             $this->user->setData($_POST);
             $this->loginService->checkLoginData($this->user, $_POST['email'], $_POST['password']);
             $this->user->loginValidation();
-            if ($this->user->checkErrors() == 'no errors') {
+            if (true === $this->user->checkErrors()) {
                 $currentUser = $this->repository->getUserByEmail($_POST['email']);
                 $this->loginService->auth($currentUser['id']);
             } else {
@@ -48,7 +48,7 @@ class LoginController extends Controller
             $this->user->setData($_POST);
             $this->loginService->checkRegisterData($this->user, $_POST['email']);
             $this->user->registerValidation();
-            if ($this->user->checkErrors() == 'no errors') {
+            if (true === $this->user->checkErrors()) {
                 $this->loginService->registerUser($this->user);
                 $success = 'Successful registration';
             } else {

@@ -53,7 +53,7 @@ class LoginModel
             $v != '' ? $emptyErrors = false : '';
         }
         if ($emptyErrors == true) {
-            return 'no errors';
+            return true;
         }
     }
 
