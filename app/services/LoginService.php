@@ -12,14 +12,22 @@ class LoginService
     ) {
     }
 
-    public function checkUser(LoginModel $validationFields, $email, $password)
+    public function registerUser(LoginModel $validationFields)
+    {
+        $hashedPassword = password_hash($validationFields->userData['password'], PASSWORD_DEFAULT);
+        $this->repository->addUser($validationFields, $hashedPassword);
+    }
+
+    public function checkLoginData(LoginModel $validationFields, $email, $password)
     {
         $userfromDB = $this->repository->getUserByEmail($email);
-        if (!isset($userfromDB['email'])) {
-            $validationFields->userExist = false;
-        } else {
-            $validationFields->passwordVeryfied = password_verify($password, $userfromDB['password']);
-        }
+        !isset($userfromDB['email']) ? $validationFields->error['emailError'] = 'User is not found' : $validationFields->passwordVeryfied = password_verify($password, $userfromDB['password']);
+    }
+
+    public function checkRegisterData(LoginModel $validationFields, $email)
+    {
+        $userfromDB = $this->repository->getUserByEmail($email);
+        isset($userfromDB['email']) ? $validationFields->error['emailError'] = 'User is already exist' : '';
     }
 
     public function auth($id)

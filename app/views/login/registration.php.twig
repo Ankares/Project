@@ -1,0 +1,54 @@
+{% extends '/layout/layout.html.twig' %}
+
+{% block title %}
+    Registration
+{% endblock %}
+
+{% block body %}
+
+    <a class="btn btn-outline-primary m-4" href="/home">Главная</a>
+    <form action="/login/registration" method="post" class="form-control mt-1 p-4 mx-auto justify-content-center w-50" oninput="checkLoginForm(['.inp_name', '.inp_email', '.inp_repeat_email', '.inp_password', '.inp_repeat_password'], '.displayButton')">  
+        <h2 class="text-center">Registration</h2>
+        <div class="form-group fs-4">
+            <label class="mb-2">Name:</label>
+            <input type="text" name="name" class="inp_name form-control mb-2" placeholder="Enter your name" value="{% if errors['nameError'] == '' %}{{post['name']|escape}}{% endif %}">  
+        </div>
+        <p class="error mt-3 fw-bold fs-5 text-danger">{{errors['nameError']|escape}}</p>
+        
+        <div class="form-group fs-4">
+            <label class="mb-2">Email address:</label>
+            <input type="email" name="email" class="inp_email form-control mb-2" placeholder="Enter email" value="{% if errors['emailError'] == '' %}{{post['email']|escape}}{% endif %} ">  
+        </div>
+        <p class="error mt-3 fw-bold fs-5 text-danger">{{errors['emailError']|escape}}</p>
+
+         <div class="form-group fs-4">
+            <label class="mb-2">Repeat email:</label>
+            <input type="email" name="repeatEmail" class="inp_repeat_email form-control mb-2" placeholder="Repeat email" value="{% if errors['repeatEmailError'] == '' %}{{post['repeatEmail']|escape}}{% endif %} ">  
+        </div>
+        <p class="error mt-3 fw-bold fs-5 text-danger">{{errors['repeatEmailError']|escape}}</p>
+
+         <div class="form-group fs-4">
+            <label class="mb-2">Password:</label>
+            <input type="password" name="password" class="inp_password form-control mb-2" placeholder="Enter password">  
+        </div>
+        <p class="error mt-3 fw-bold fs-5 text-danger">{{errors['passwordError']|escape}}</p>
+
+        <div class="form-group fs-4">
+            <label class="mb-2">Repeat password:</label>
+            <input type="password" name="repeatPassword" class="inp_repeat_password form-control mb-2" placeholder="Repeat password">  
+        </div>
+        <p class="error mt-3 fw-bold fs-5 text-danger">{{errors['repeatPasswordError']|escape}}</p>
+    
+        {% if success %}
+            <div class="success mt-3 fw-bold fs-4 text-success">
+                {{success|escape}}
+            </div>
+        {% endif %}
+      
+        <button type="submit" class="displayButton d-none btn btn-primary mt-3 mb-3 p-2 col-md-4 col-8">Registration</button>    
+    </form>
+{% endblock %}
+
+{%  block js %}
+    <script src="/app/js/script.js"></script>
+{% endblock %}

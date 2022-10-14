@@ -20,16 +20,16 @@ class LoginController extends Controller
 
     public function index()
     {
-        $error = null;
+        $errors = null;
         if (isset($_POST['email'])) {
             $this->user->setData($_POST);
-            $this->loginService->checkUser($this->user, $_POST['email'], $_POST['password']);
-            $this->user->validation();
-            if (empty($this->user->error)) {
+            $this->loginService->checkLoginData($this->user, $_POST['email'], $_POST['password']);
+            $this->user->loginValidation();
+            if (true === $this->user->checkErrors()) {
                 $currentUser = $this->repository->getUserByEmail($_POST['email']);
                 $this->loginService->auth($currentUser['id']);
             } else {
-                $error = $this->user->error;
+                $errors = $this->user->error;
             }
         }
         if (isset($_SESSION['user'])) {
@@ -37,7 +37,31 @@ class LoginController extends Controller
 
             return;
         }
-        echo $this->twig->render('/login/index.php.twig', ['error' => $error, 'post' => $_POST]);
+        echo $this->twig->render('/login/index.php.twig', ['errors' => $errors, 'post' => $_POST]);
+    }
+
+    public function registration()
+    {
+        $success = null;
+        $errors = null;
+        if (isset($_POST['email'])) {
+            $this->user->setData($_POST);
+            $this->loginService->checkRegisterData($this->user, $_POST['email']);
+            $this->user->registerValidation();
+            if (true === $this->user->checkErrors()) {
+                $this->loginService->registerUser($this->user);
+                $success = 'Successful registration';
+            } else {
+                $errors = $this->user->error;
+            }
+        }
+        if (isset($_SESSION['user'])) {
+            header('Location: /login/dashboard');
+
+            return;
+        }
+
+        echo $this->twig->render('/login/registration.php.twig', ['success' => $success, 'errors' => $errors, 'post' => $_POST]);
     }
 
     public function dashboard()
