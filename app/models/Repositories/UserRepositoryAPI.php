@@ -3,7 +3,7 @@
 namespace App\Models\Repositories;
 use App\Models\UserModel;
 
-class UserRepositoryAPI implements IUserProcessing{
+class UserRepositoryAPI{
     
     private $curl = null;
     
