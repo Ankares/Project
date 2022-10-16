@@ -33,11 +33,11 @@ class App
     private function bootstrap()
     {
         $connection = ServiceProvider::getInstance();
-        $connection->bind(IUserProcessing::class, static fn (ServiceProvider $provider) => $provider->make(UserModel::class));
-        $connection->bind(UserController::class, static fn (ServiceProvider $service) => new UserController($service->make(IUserProcessing::class), $service->make(UserRepository::class), $service->make(FileUpload::class), $service->make(LoggingFiles::class)));
-        $connection->bind(LoginService::class, static fn (ServiceProvider $service) => new LoginService($service->make(LoginRepository::class)));
+        $connection->bind(IUserProcessing::class, static fn (ServiceProvider $service) => $service->make(UserModel::class));
+        $connection->bind(UserController::class, static fn (ServiceProvider $service) => $service->resolver(UserController::class));
+        $connection->bind(LoginService::class, static fn (ServiceProvider $service) => $service->resolver(LoginService::class));
         $connection->bind(Environment::class, static fn () => new Environment(new FilesystemLoader('app/views')));
-        $connection->bind(LoginController::class, static fn (ServiceProvider $service) => new LoginController($service->make(LoginModel::class), $service->make(LoginRepository::class), $service->make(LoginService::class), $service->make(Environment::class)));
+        $connection->bind(LoginController::class, static fn (ServiceProvider $service) => $service->resolver(LoginController::class));
     }
 
     public function run()
