@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use ReflectionClass;
+
 class ServiceProvider
 {
     private static $connection = null;
@@ -25,5 +27,24 @@ class ServiceProvider
     public function bind(string $class, \Closure $resolver)
     {
         $this->container[$class] = $resolver;
+    }
+
+    public function resolver(string $class)
+    {
+        $reflectionClass = new ReflectionClass($class);
+        $constructor = $reflectionClass->getConstructor();
+        if($constructor === null) {
+            return $reflectionClass->newInstance();
+        }
+        $parametrs = $constructor->getParameters();
+        if($parametrs === []) {
+            return $reflectionClass->newInstance();
+        }
+        $newInstanceParams = [];
+        foreach ($parametrs as $parametr) {
+            $newInstanceParams[] = $parametr->getType() === null ? $parametr->getDefaultValue(): $this->make($parametr->getType()->getName());
+        }
+
+        return $reflectionClass->newInstanceArgs($newInstanceParams);
     }
 }
