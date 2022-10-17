@@ -21,7 +21,7 @@ class ServiceProvider
 
     public function make(string $class)
     {
-        return isset($this->container[$class]) ? $this->container[$class]($this) : new $class;
+        return isset($this->container[$class]) ? $this->container[$class]($this) : $this->resolver($class);
     }
 
     public function bind(string $class, \Closure $resolver)
@@ -29,7 +29,7 @@ class ServiceProvider
         $this->container[$class] = $resolver;
     }
 
-    public function resolver(string $class)
+    private function resolver(string $class)
     {
         $reflectionClass = new ReflectionClass($class);
         $constructor = $reflectionClass->getConstructor();

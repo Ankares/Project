@@ -34,10 +34,7 @@ class App
     {
         $connection = ServiceProvider::getInstance();
         $connection->bind(IUserProcessing::class, static fn (ServiceProvider $service) => $service->make(UserModel::class));
-        $connection->bind(UserController::class, static fn (ServiceProvider $service) => $service->resolver(UserController::class));
-        $connection->bind(LoginService::class, static fn (ServiceProvider $service) => $service->resolver(LoginService::class));
         $connection->bind(Environment::class, static fn () => new Environment(new FilesystemLoader('app/views')));
-        $connection->bind(LoginController::class, static fn (ServiceProvider $service) => $service->resolver(LoginController::class));
     }
 
     public function run()
