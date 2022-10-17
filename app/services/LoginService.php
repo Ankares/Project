@@ -36,9 +36,15 @@ class LoginService
         header('Location: /login/dashboard');
     }
 
-    public function logOut()
+    public function rememberMe($session) 
     {
-        unset($_SESSION['user']);
+        setcookie('user', $session, time() + 3600*24*7, '/');
+    }
+
+    public function logOut($session)
+    {
+        setcookie('user', $session, time() - 3600*24*7, '/');
+        unset($session);
         header('Location: /login/index');
         session_destroy();
     }

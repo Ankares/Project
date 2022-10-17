@@ -3,20 +3,45 @@
     Dashboard
 {% endblock %}
 {% block body %}
-<div class="container mt-2 p-3">
+<div class="container mt-5 p-3">
     <form action="/login/exit" method="post">
         <input type="hidden" name="logout">
-        <button class="btn btn-outline-danger offset-md-9 offset-9 col-md-2 col-3 mb-4 fs-5">Log out</button>
+        <div class="offset-md-1 offset-0 col-12 col-md-10 d-flex justify-content-between mb-3">
+            <a class="btn btn-outline-primary fs-5 px-3 float-start me-2" href="/home">Home page</a>
+            <button class="btn btn-outline-danger fs-5 px-3">Log out</button>
+        </div>
     </form>
     <ul class="list-group">
         <li class="list-group-item offset-md-1 offset-0 col-md-10 col-12 mb-4 fs-5 p-4">
-            <a class="btn btn-outline-primary fs-5 px-3" href="/home">Home page</a>
             <h1 class="text-center mt-4">Welcome back, {{user['name']|escape}}</h1>
             <form action="/login/dashboard" method="post" enctype="multipart/form-data" oninput="checkLoginForm(['.inp_file'], '.displayButton')"> 
-                <div class="col-8 mt-4 mb-4">
+                <div class="col-8 mt-4">
                     <p class="fs-2">Files:</p>
+                    {% if files is empty %}
+                        <p class="form-control-plaintext">
+                            No files found
+                        </p>
+                    {% else %}
+                        <p class="form-control-plaintext">
+                            Found {{files|length|escape}} files
+                        </p>
+                         <a href="/login/showFiles/{{user['id']}}" class="outfit btn btn-outline-primary p-2 mb-4 px-3">Show files</a>
+                    {% endif %}
+                    
                     <input type="hidden" name="id" value="{{user['id']}}">
-                    <input type="file" class="inp_file form-control" name="file">
+                    <input type="file" class="inp_file form-control mb-3" name="file">
+                    
+                    {% if error %}
+                        <div class="error mt-3 fw-bold fs-4 text-danger">
+                            {{error|escape}}
+                        </div>
+                    {% endif %}
+                     {% if success %}
+                        <div class="success mt-3 fw-bold fs-4 text-success">
+                            {{success|escape}}
+                        </div>
+                    {% endif %}
+      
                     <button type="submit" class="displayButton d-none btn btn-primary mt-3 mb-3 p-2 col-md-3 col-8">Add file</button>
                 </div>   
             </form>

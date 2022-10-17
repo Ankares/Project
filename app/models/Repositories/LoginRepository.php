@@ -29,6 +29,18 @@ class LoginRepository implements ILoginProcessing
         $query->execute(['userId' => $userId, 'file' => $fileName, 'path' => $filePath, 'size' => $fileSize]);
     }
 
+    public function getFiles($id)
+    {
+        $sql = $this->db->query("SELECT * FROM regUsersFiles WHERE userId = '$id'");
+
+        return $sql->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function deleteFile($filePath)
+    {
+        $this->db->query("DELETE FROM regUsersFiles WHERE path = '$filePath'");
+    }
+
     public function getUserByEmail($email)
     {
         $sql = $this->db->query("SELECT * FROM regUsers WHERE email = '$email'");
