@@ -3,14 +3,27 @@
     Dashboard
 {% endblock %}
 {% block body %}
-    <div class="container mt-5 text-center p-4">
-        <h1>Welcome back, {{user['name']|escape}}</h1>
-        <a class="btn btn-outline-primary fs-4 mt-4 col-5" href="/home">Home</a>
-        <form action="/login/exit" method="post">
-            <input type="hidden" name="logout">
-            <button class="btn btn-outline-danger fs-4 mt-3 col-5">Log out</button>
-        </form>
-    </div>
+<div class="container mt-2 p-3">
+    <form action="/login/exit" method="post">
+        <input type="hidden" name="logout">
+        <button class="btn btn-outline-danger offset-md-9 offset-9 col-md-2 col-3 mb-4 fs-5">Log out</button>
+    </form>
+    <ul class="list-group">
+        <li class="list-group-item offset-md-1 offset-0 col-md-10 col-12 mb-4 fs-5 p-4">
+            <a class="btn btn-outline-primary fs-5 px-3" href="/home">Home page</a>
+            <h1 class="text-center mt-4">Welcome back, {{user['name']|escape}}</h1>
+            <form action="/login/dashboard" method="post" enctype="multipart/form-data" oninput="checkLoginForm(['.inp_file'], '.displayButton')"> 
+                <div class="col-8 mt-4 mb-4">
+                    <p class="fs-2">Files:</p>
+                    <input type="hidden" name="id" value="{{user['id']}}">
+                    <input type="file" class="inp_file form-control" name="file">
+                    <button type="submit" class="displayButton d-none btn btn-primary mt-3 mb-3 p-2 col-md-3 col-8">Add file</button>
+                </div>   
+            </form>
+        </li>
+    </ul>
+</div>
+    
 {% endblock %}
     
 {%  block js %}

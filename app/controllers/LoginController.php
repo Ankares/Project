@@ -3,8 +3,10 @@
 namespace App\Controllers;
 
 use App\Core\Controller;
+use App\Logs\LoggingFiles;
 use App\Models\LoginModel;
 use App\Models\Repositories\LoginRepository;
+use App\Services\FileUpload;
 use App\Services\LoginService;
 use Twig\Environment;
 
@@ -14,7 +16,9 @@ class LoginController extends Controller
         private readonly LoginModel $user,
         private readonly LoginRepository $repository,
         private readonly LoginService $loginService,
-        private readonly Environment $twig
+        private readonly Environment $twig,
+        private readonly FileUpload $fileUploader,
+        private readonly LoggingFiles $fileLog
     ) {
     }
 
@@ -67,13 +71,27 @@ class LoginController extends Controller
     public function dashboard()
     {
         $user = null;
+        $success = null;
+        $error = null;
         if (!isset($_SESSION['user'])) {
             header('Location: /login/index');
 
             return;
         }
+        if (isset($_FILES['file'])) {
+            $fileInfo = $this->fileUploader->checkFile($_FILES['file']);
+            if (!empty($fileInfo['error'])) {
+                $error = $fileInfo['error'];
+                $this->fileLog->error('',[$_FILES['file'], $error]);
+                return;  
+            }
+            $pathToDB = $this->fileUploader->moveFile($_FILES['file']);
+            $this->repository->addFile($_POST['id'], $fileInfo['fileName'], $pathToDB, $fileInfo['fileSize']);
+            $this->fileLog->info('',[$_FILES['file'], 'Info: File successfully added']);
+            $success = 'Successfully updated';
+        }
         $user = $this->repository->getUserBySession($_SESSION['user']);
-        echo $this->twig->render('/login/dashboard.php.twig', ['user' => $user]);
+        echo $this->twig->render('/login/dashboard.php.twig', ['user' => $user, 'success' => $success, 'error' => $error]);
     }
 
     public function exit()

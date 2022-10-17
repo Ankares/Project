@@ -22,6 +22,13 @@ class LoginRepository implements ILoginProcessing
         $query->execute(['email' => $user->userData['email'], 'name' => $user->userData['name'], 'password' => $hashedPassword]);
     }
 
+    public function addFile($userId, $fileName, $filePath, $fileSize)
+    {
+        $sql = 'INSERT INTO regUsersFiles(userId, file, path, size) VALUES(:userId, :file, :path, :size)';
+        $query = $this->db->prepare($sql);
+        $query->execute(['userId' => $userId, 'file' => $fileName, 'path' => $filePath, 'size' => $fileSize]);
+    }
+
     public function getUserByEmail($email)
     {
         $sql = $this->db->query("SELECT * FROM regUsers WHERE email = '$email'");
