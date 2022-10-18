@@ -15,11 +15,11 @@ class LoginRepository implements ILoginProcessing
         $this->db = DB::getInstance();
     }
 
-    public function addUser(LoginModel $user, $hashedPassword)
+    public function addUser(LoginModel $user, $hashedPassword, $solt)
     {
-        $sql = 'INSERT INTO regUsers(email, name, password) VALUES(:email, :name, :password)';
+        $sql = 'INSERT INTO regUsers(email, name, password, solt) VALUES(:email, :name, :password, :solt)';
         $query = $this->db->prepare($sql);
-        $query->execute(['email' => $user->userData['email'], 'name' => $user->userData['name'], 'password' => $hashedPassword]);
+        $query->execute(['email' => $user->userData['email'], 'name' => $user->userData['name'], 'password' => $hashedPassword, 'solt' => $solt]);
     }
 
     public function addFile($userId, $fileName, $filePath, $fileSize)
@@ -27,6 +27,11 @@ class LoginRepository implements ILoginProcessing
         $sql = 'INSERT INTO regUsersFiles(userId, file, path, size) VALUES(:userId, :file, :path, :size)';
         $query = $this->db->prepare($sql);
         $query->execute(['userId' => $userId, 'file' => $fileName, 'path' => $filePath, 'size' => $fileSize]);
+    }
+
+    public function addCookie($token, $email)
+    {
+        $this->db->query("UPDATE regUsers SET cookie = '$token' WHERE email = '$email'");
     }
 
     public function getFiles($id)
@@ -48,9 +53,16 @@ class LoginRepository implements ILoginProcessing
         return $sql->fetch(\PDO::FETCH_ASSOC);
     }
 
-    public function getUserBySession($session)
+    public function getUserByCookie($email, $token)
     {
-        $sql = $this->db->query("SELECT * FROM regUsers WHERE id = '$session'");
+        $sql = $this->db->query("SELECT * FROM regUsers WHERE email = '$email' AND cookie = '$token'");
+
+        return $sql->fetch(\PDO::FETCH_ASSOC);
+    }
+
+    public function getUserById($id)
+    {
+        $sql = $this->db->query("SELECT * FROM regUsers WHERE id = '$id'");
 
         return $sql->fetch(\PDO::FETCH_ASSOC);
     }

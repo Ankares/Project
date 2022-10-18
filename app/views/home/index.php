@@ -8,7 +8,7 @@
     <title>Home page</title>
 </head>
 <body>
-    <?php if(isset($_SESSION['user'])):?>
+    <?php if(isset($_SESSION['auth'])):?>
         <div class="container text-center mt-5">
             <h1 class="display-3 mb-3">Welcome</h1>
             <a class="link-primary me-3 fs-3" href="/user">Add user</a>

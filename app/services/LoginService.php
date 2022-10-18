@@ -14,14 +14,22 @@ class LoginService
 
     public function registerUser(LoginModel $validationFields)
     {
-        $hashedPassword = password_hash($validationFields->userData['password'], PASSWORD_DEFAULT);
-        $this->repository->addUser($validationFields, $hashedPassword);
+        $solt = uniqid();
+        $strongPassword = $validationFields->userData['password'].$solt;
+        $hashedPassword = password_hash($strongPassword, PASSWORD_DEFAULT);
+        $this->repository->addUser($validationFields, $hashedPassword, $solt);
     }
 
     public function checkLoginData(LoginModel $validationFields, $email, $password)
     {
         $userfromDB = $this->repository->getUserByEmail($email);
-        !isset($userfromDB['email']) ? $validationFields->error['emailError'] = 'User is not found' : $validationFields->passwordVeryfied = password_verify($password, $userfromDB['password']);
+        if (!isset($userfromDB['email'])) {
+            $validationFields->error['emailError'] = 'User is not found';
+            return;
+        } 
+        $passwordToCheck = $password.$userfromDB['solt'];
+        $verification = password_verify($passwordToCheck, $userfromDB['password']);
+        $validationFields->passwordVeryfied = $verification;
     }
 
     public function checkRegisterData(LoginModel $validationFields, $email)
@@ -30,22 +38,43 @@ class LoginService
         isset($userfromDB['email']) ? $validationFields->error['emailError'] = 'User is already exist' : '';
     }
 
-    public function auth($id)
+    public function setSession($user)
     {
-        $_SESSION['user'] = $id;
+        $_SESSION['auth'] = true;
+        $_SESSION['email'] = $user['email'];
+        $_SESSION['id'] = $user['id'];
+    }
+
+    public function setCookie($user) 
+    {
+        $email = $user['email'];
+        $token = md5(uniqid().time());
+        setcookie('email', $email, time() + 3600*24*7, '/');
+        setcookie('token', $token, time() + 3600*24*7, '/');
+        $this->repository->addCookie($token, $email);
         header('Location: /login/dashboard');
     }
 
-    public function rememberMe($session) 
+    public function authorization() 
     {
-        setcookie('user', $session, time() + 3600*24*7, '/');
+        if (!isset($_SESSION['auth']) || $_SESSION['auth'] == false) {
+            if (isset($_COOKIE['email']) && isset($_COOKIE['token'])) {
+                $email = $_COOKIE['email'];
+                $token = $_COOKIE['token'];
+                $user = $this->repository->getUserByCookie($email, $token);
+                $this->setSession($user);  
+            } 
+        }
     }
 
-    public function logOut($session)
+    public function logOut()
     {
-        setcookie('user', $session, time() - 3600*24*7, '/');
-        unset($session);
-        header('Location: /login/index');
+        setcookie('email', '', time(), '/');
+        setcookie('token', '', time(), '/');
+        unset($_SESSION['auth']);
+        unset($_SESSION['email']);
+        unset($_SESSION['id']);
         session_destroy();
+        header('Location: /login/index');
     }
 }

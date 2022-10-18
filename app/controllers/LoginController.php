@@ -31,13 +31,12 @@ class LoginController extends Controller
             $this->user->loginValidation();
             if (true === $this->user->checkErrors()) {
                 $currentUser = $this->repository->getUserByEmail($_POST['email']);
-                $this->loginService->auth($currentUser['id']);
-                isset($_POST['remember']) ? $this->loginService->rememberMe($_SESSION['user']) : ''; 
+                isset($_POST['remember']) ? $this->loginService->setCookie($currentUser) : $this->loginService->setSession($currentUser);
             } else {
                 $errors = $this->user->error;
             }
         }
-        if (isset($_SESSION['user'])) {
+        if (isset($_SESSION['auth'])) {
             header('Location: /login/dashboard');
 
             return;
@@ -56,13 +55,13 @@ class LoginController extends Controller
             if (true === $this->user->checkErrors()) {
                 $this->loginService->registerUser($this->user);
                 $currentUser = $this->repository->getUserByEmail($_POST['email']);
-                $this->loginService->auth($currentUser['id']);
+                $this->loginService->setSession($currentUser);
                 $success = 'Successful registration';
             } else {
                 $errors = $this->user->error;
             }
         }
-        if (isset($_SESSION['user'])) {
+        if (isset($_SESSION['auth'])) {
             header('Location: /login/dashboard');
 
             return;
@@ -73,10 +72,13 @@ class LoginController extends Controller
 
     public function dashboard()
     {
+        $this->loginService->authorization(); 
+
         $user = null;
         $success = null;
         $error = null;
-        if (!isset($_SESSION['user'])) {
+
+        if (!isset($_SESSION['auth']) && !isset($_COOKIE['token'])) {
             header('Location: /login/index');
 
             return;
@@ -93,8 +95,8 @@ class LoginController extends Controller
                 $this->fileLog->error('',[$_FILES['file'], $error]); 
             } 
         }
-        $user = $this->repository->getUserBySession($_SESSION['user']);
-        $files = $this->repository->getFiles($_SESSION['user']);
+        $user = $this->repository->getUserByEmail($_SESSION['email']);
+        $files = $this->repository->getFiles($_SESSION['id']);
         echo $this->twig->render('/login/dashboard.php.twig', ['user' => $user, 'success' => $success, 'error' => $error, 'files' => $files]);
     }
 
@@ -102,9 +104,9 @@ class LoginController extends Controller
     {   
         $files = null;
         $user = null;
-        if ($userID == $_SESSION['user']) {
+        if ($userID == $_SESSION['id']) {
             $files = $this->repository->getFiles($userID);
-            $user = $this->repository->getUserBySession($userID);
+            $user = $this->repository->getUserById($userID);
         }
         echo $this->twig->render('/login/showFiles.php.twig', ['files' => $files, 'user' => $user]);
     }
@@ -122,7 +124,7 @@ class LoginController extends Controller
     public function exit()
     {
         if (isset($_POST['logout'])) {
-            $this->loginService->logOut($_SESSION['user']);
+            $this->loginService->logOut();
             exit();
         }
     }
