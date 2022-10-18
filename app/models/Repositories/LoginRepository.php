@@ -53,9 +53,9 @@ class LoginRepository implements ILoginProcessing
         return $sql->fetch(\PDO::FETCH_ASSOC);
     }
 
-    public function getUserByCookie($email, $token)
+    public function getUserByCookie($token)
     {
-        $sql = $this->db->query("SELECT * FROM regUsers WHERE email = '$email' AND cookie = '$token'");
+        $sql = $this->db->query("SELECT * FROM regUsers WHERE cookie = '$token'");
 
         return $sql->fetch(\PDO::FETCH_ASSOC);
     }

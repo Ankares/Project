@@ -49,7 +49,6 @@ class LoginService
     {
         $email = $user['email'];
         $token = md5(uniqid().time());
-        setcookie('email', $email, time() + 3600*24*7, '/');
         setcookie('token', $token, time() + 3600*24*7, '/');
         $this->repository->addCookie($token, $email);
         header('Location: /login/dashboard');
@@ -58,10 +57,9 @@ class LoginService
     public function authorization() 
     {
         if (!isset($_SESSION['auth']) || $_SESSION['auth'] == false) {
-            if (isset($_COOKIE['email']) && isset($_COOKIE['token'])) {
-                $email = $_COOKIE['email'];
+            if (isset($_COOKIE['token'])) {
                 $token = $_COOKIE['token'];
-                $user = $this->repository->getUserByCookie($email, $token);
+                $user = $this->repository->getUserByCookie($token);
                 $this->setSession($user);  
             } 
         }
@@ -69,11 +67,8 @@ class LoginService
 
     public function logOut()
     {
-        setcookie('email', '', time(), '/');
         setcookie('token', '', time(), '/');
-        unset($_SESSION['auth']);
-        unset($_SESSION['email']);
-        unset($_SESSION['id']);
+        unset($_SESSION);
         session_destroy();
         header('Location: /login/index');
     }
