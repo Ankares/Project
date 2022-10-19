@@ -17,6 +17,43 @@ class LoginService
     ) {
     }
 
+    public function loginAttempts()
+    {
+        $ip = $_SERVER['REMOTE_ADDR'];
+        $attempts = 1;
+        $time = date('Y-m-d H:i:s');
+        $data = $this->repository->getLoginAttemptsData($ip);
+        if (!isset($data['userIP'])) {
+            $this->repository->setLoginAttemptsData($ip, $attempts);
+        } else {
+            $this->repository->updateLoginAttempts($data['attempts']+1, $ip);
+        }
+        if (isset($data['attempts']) && $data['attempts'] >= 3) {
+            $this->repository->updateBlockTime($time, $ip);
+            return;
+        }
+    }
+
+    public function checkBlockTime()
+    {
+        $blocked = false;
+        $ip = $_SERVER['REMOTE_ADDR'];
+        $data = $this->repository->getLoginAttemptsData($ip);
+        if (isset($data['blockTime'])) {
+            $now = date('Y-m-d H:i:s');
+            $blockTime = $data['blockTime'];
+            $diff = ((strtotime($now) - strtotime($blockTime))/60);
+            if ($diff >= 15) {
+                $blocked = false;
+                $this->repository->clearBlockTime($ip);
+                $this->repository->updateLoginAttempts(0, $ip);
+            }  else {
+                $blocked = true;
+            } 
+        }
+        return $blocked;
+    }
+    
     public function registerUser(LoginModel $validationFields)
     {
         $solt = uniqid();
@@ -51,6 +88,7 @@ class LoginService
             $this->checkLoginData($this->user, $post['email'], $post['password']);
             $this->user->loginValidation();
             if (true === $this->user->checkErrors()) {
+                $this->repository->updateLoginAttempts(0, $_SERVER['REMOTE_ADDR']);
                 $currentUser = $this->repository->getUserByEmail($post['email']);
                 isset($post['remember']) ? $this->setCookie($currentUser) : $this->setSession($currentUser);
             } else {
@@ -184,6 +222,7 @@ class LoginService
 
     public function logOut()
     {
+        $this->repository->updateLoginAttempts(0, $_SERVER['REMOTE_ADDR']);
         setcookie('token', '', time(), '/');
         unset($_SESSION);
         session_destroy();

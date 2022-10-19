@@ -34,6 +34,35 @@ class LoginRepository implements ILoginProcessing
         $this->db->query("UPDATE regUsers SET cookie = '$token' WHERE email = '$email'");
     }
 
+    public function setLoginAttemptsData($ip, $attempts)
+    {
+        $sql = 'INSERT INTO loginAttempts(userIP, attempts) VALUES(:userIP, :attempts)';
+        $query = $this->db->prepare($sql);
+        $query->execute(['userIP' => $ip, 'attempts' => $attempts]);
+    }
+
+    public function getLoginAttemptsData($ip)
+    {
+        $sql = $this->db->query("SELECT * FROM loginAttempts WHERE userIP = '$ip'");
+
+        return $sql->fetch(\PDO::FETCH_ASSOC);
+    }
+
+    public function updateLoginAttempts($count, $ip)
+    {
+        $this->db->query("UPDATE loginAttempts SET attempts = '$count' WHERE userIP = '$ip'");
+    }
+
+    public function updateBlockTime($time, $ip)
+    {
+        $this->db->query("UPDATE loginAttempts SET blockTime = '$time' WHERE userIP = '$ip'");
+    }
+
+    public function clearBlockTime($ip)
+    {
+        $this->db->query("UPDATE loginAttempts SET blockTime = null WHERE userIP = '$ip'");
+    }
+
     public function getFiles($id)
     {
         $sql = $this->db->query("SELECT * FROM regUsersFiles WHERE userId = '$id'");

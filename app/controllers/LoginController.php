@@ -21,9 +21,14 @@ class LoginController extends Controller
     public function index()
     {
         $errors = null;
+        $blocked = null;
         $errors = $this->loginService->loginAction($_POST);
+        if (isset($_POST['attempt'])) {
+            $this->loginService->loginAttempts();
+        }
+        $blocked = $this->loginService->checkBlockTime();
         $this->loginService->loginRedirection();
-        echo $this->twig->render('/login/index.php.twig', ['errors' => $errors, 'post' => $_POST]);
+        echo $this->twig->render('/login/index.php.twig', ['errors' => $errors, 'post' => $_POST, 'blocked' => $blocked]);
     }
 
     public function registration()
