@@ -1,0 +1,16 @@
+{% extends '/layout/layout.html.twig' %}
+{% block title %}
+    Login
+{% endblock %}
+{% block body %}
+
+    <div class="container p-4 text-center">
+        <h1 class="mb-4 mt-3">Cookie error</h1>
+        <p class="lead">You tried to change your cookie token. Please clear your cookies and try to log in againg</p> 
+        <a class="btn btn-outline-primary m-4" href="/home">Главная</a>
+    </div>
+
+{% endblock %}
+{%  block js %}
+    <script src="/app/js/script.js"></script>
+{% endblock %}
