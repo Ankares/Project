@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
+use App\Logs\LoggingAuth;
 use App\Logs\LoggingFiles;
 use App\Models\LoginModel;
 use App\Models\Repositories\LoginRepository;
-use App\Services\FileUpload;
 
 class LoginService
 {
@@ -13,24 +13,39 @@ class LoginService
         private readonly LoginModel $user,
         private readonly LoginRepository $repository,
         private readonly FileUpload $fileUploader,
-        private readonly LoggingFiles $fileLog
+        private readonly LoggingFiles $fileLog,
+        private readonly LoggingAuth $authLog
     ) {
     }
 
-    public function loginAttempts()
+    public function loginAttempts($errors, $post)
     {
-        $ip = $_SERVER['REMOTE_ADDR'];
-        $attempts = 1;
-        $time = date('Y-m-d H:i:s');
-        $data = $this->repository->getLoginAttemptsData($ip);
-        if (!isset($data['userIP'])) {
-            $this->repository->setLoginAttemptsData($ip, $attempts);
-        } else {
-            $this->repository->updateLoginAttempts($data['attempts']+1, $ip);
-        }
-        if (isset($data['attempts']) && $data['attempts'] >= 3) {
-            $this->repository->updateBlockTime($time, $ip);
-            return;
+        if (isset($errors)) {
+            $ip = $_SERVER['REMOTE_ADDR'];
+            $attempts = 1;
+            $time = date('Y-m-d H:i:s');
+            $endTime = date('Y-m-d H:i:s', strtotime('+15 minutes'));
+            $data = $this->repository->getLoginAttemptsData($ip);
+            if (!isset($data['userIP'])) {
+                $this->repository->setLoginAttemptsData($ip, $attempts);
+            } else {
+                $this->repository->updateLoginAttempts($data['attempts'] + 1, $ip);
+            }
+            if (isset($data['attempts']) && $data['attempts'] >= 2) {
+                $this->repository->updateBlockTime($time, $ip);
+                $this->authLog->error(
+                    '',
+                    [
+                        'ip' => $ip,
+                        'email' => $post['email'],
+                        'blockStart' => $time,
+                        'blockEnd' => $endTime,
+                        'path' => 'authLogs.log',
+                    ]
+                );
+
+                return;
+            }
         }
     }
 
@@ -40,20 +55,20 @@ class LoginService
         $ip = $_SERVER['REMOTE_ADDR'];
         $data = $this->repository->getLoginAttemptsData($ip);
         if (isset($data['blockTime'])) {
-            $now = date('Y-m-d H:i:s');
             $blockTime = $data['blockTime'];
-            $diff = ((strtotime($now) - strtotime($blockTime))/60);
+            $diff = ((time() - strtotime($blockTime)) / 60);
             if ($diff >= 15) {
                 $blocked = false;
                 $this->repository->clearBlockTime($ip);
                 $this->repository->updateLoginAttempts(0, $ip);
-            }  else {
+            } else {
                 $blocked = true;
-            } 
+            }
         }
+
         return $blocked;
     }
-    
+
     public function registerUser(LoginModel $validationFields)
     {
         $solt = uniqid();
@@ -67,8 +82,9 @@ class LoginService
         $userfromDB = $this->repository->getUserByEmail($email);
         if (!isset($userfromDB['email'])) {
             $validationFields->error['emailError'] = 'User is not found';
+
             return;
-        } 
+        }
         $passwordToCheck = $password.$userfromDB['solt'];
         $verification = password_verify($passwordToCheck, $userfromDB['password']);
         $validationFields->passwordVeryfied = $verification;
@@ -95,6 +111,7 @@ class LoginService
                 $errors = $this->user->error;
             }
         }
+
         return $errors;
     }
 
@@ -113,6 +130,7 @@ class LoginService
                 $errors = $this->user->error;
             }
         }
+
         return $errors;
     }
 
@@ -124,27 +142,43 @@ class LoginService
         if (empty($fileInfo['error'])) {
             $pathToDB = $this->fileUploader->moveFile($file);
             $this->repository->addFile($id, $fileInfo['fileName'], $pathToDB, $fileInfo['fileSize']);
-            $this->fileLog->info('',[$file, 'Info: File successfully added']);
+            $this->fileLog->info(
+                '',
+                [
+                    'fileName' => $file['name'],
+                    'fileSize' => $file['size'],
+                    'path' => 'fileLogs.log',
+                    'status' => 'Info: File successfully added',
+                ]
+            );
             $success = 'Successfully updated';
         } else {
             $error = $fileInfo['error'];
-            $this->fileLog->error('',[$_FILES['file'], $error]); 
-        } 
+            $this->fileLog->error(
+                '',
+                [
+                    'fileName' => $file['name'],
+                    'fileSize' => $file['size'],
+                    'path' => 'fileLogs.log',
+                    'status' => $error,
+                ]
+            );
+        }
 
         return [
-            'error' => $error, 
-            'success' => $success
+            'error' => $error,
+            'success' => $success,
         ];
     }
 
-    public function deleteFileFromDashboard($path) 
+    public function deleteFileFromDashboard($path)
     {
         if (isset($path)) {
             $this->repository->deleteFile($path);
             $this->fileUploader->deleteFromDir($path);
             $this->fileUploader->deleteEmptyDir($path);
         }
-        header ('Location: /login/showFiles/'.$_POST['userId']);
+        header('Location: /login/showFiles/'.$_POST['userId']);
     }
 
     public function setSession($user)
@@ -154,34 +188,34 @@ class LoginService
         $_SESSION['id'] = $user['id'];
     }
 
-    public function setCookie($user) 
+    public function setCookie($user)
     {
         $email = $user['email'];
         $token = md5(uniqid().time());
-        setcookie('token', $token, time() + 3600*24*7, '/');
+        setcookie('token', $token, time() + 3600 * 24 * 7, '/');
         $this->repository->addCookie($token, $email);
         header('Location: /login/dashboard');
 
         return;
     }
 
-    public function checkSession() 
+    public function authorization()
     {
         if (!isset($_SESSION['auth']) || $_SESSION['auth'] == false) {
             $data = $this->authentication();
             if ($data['cookieStatus'] === true) {
-                $this->setSession($data['user']);  
-            }           
+                $this->setSession($data['user']);
+            }
         }
     }
-    
+
     private function authentication()
     {
         $cookieStatus = null;
         $currentUser = null;
         if (isset($_COOKIE['token'])) {
-            $possibleUser = $this->repository->getUserByCookie($_COOKIE['token']);     
-            if(!empty($possibleUser) && $possibleUser['cookie'] === $_COOKIE['token']) {
+            $possibleUser = $this->repository->getUserByCookie($_COOKIE['token']);
+            if (!empty($possibleUser) && $possibleUser['cookie'] === $_COOKIE['token']) {
                 $cookieStatus = true;
                 $currentUser = $possibleUser;
             } else {
@@ -191,24 +225,18 @@ class LoginService
         }
 
         return [
-            'cookieStatus' => $cookieStatus, 
-            'user' => $currentUser
+            'cookieStatus' => $cookieStatus,
+            'user' => $currentUser,
         ];
     }
 
-    public function authorization() 
+    public function dashboardRedirection()
     {
-        $data = $this->authentication();
-        if ($data['cookieStatus'] === false) {
-            header('Location: /login/cookieError');
+        if (!isset($_SESSION['auth'])) {
+            header('Location: /login/index');
 
             return;
         }
-        if (!isset($_SESSION['auth'])) {
-            header('Location: /login/index');
-            
-            return;
-        } 
     }
 
     public function loginRedirection()
@@ -222,7 +250,6 @@ class LoginService
 
     public function logOut()
     {
-        $this->repository->updateLoginAttempts(0, $_SERVER['REMOTE_ADDR']);
         setcookie('token', '', time(), '/');
         unset($_SESSION);
         session_destroy();

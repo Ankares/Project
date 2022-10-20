@@ -33,16 +33,16 @@ class ServiceProvider
     {
         $reflectionClass = new ReflectionClass($class);
         $constructor = $reflectionClass->getConstructor();
-        if($constructor === null) {
+        if ($constructor === null) {
             return $reflectionClass->newInstance();
         }
         $parametrs = $constructor->getParameters();
-        if($parametrs === []) {
+        if ($parametrs === []) {
             return $reflectionClass->newInstance();
         }
         $newInstanceParams = [];
         foreach ($parametrs as $parametr) {
-            $newInstanceParams[] = $parametr->getType() === null ? $parametr->getDefaultValue(): $this->make($parametr->getType()->getName());
+            $newInstanceParams[] = $parametr->getType() === null ? $parametr->getDefaultValue() : $this->make($parametr->getType()->getName());
         }
 
         return $reflectionClass->newInstanceArgs($newInstanceParams);

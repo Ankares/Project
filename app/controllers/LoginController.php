@@ -21,21 +21,20 @@ class LoginController extends Controller
     public function index()
     {
         $errors = null;
-        $blocked = null;
-        $errors = $this->loginService->loginAction($_POST);
-        if (isset($_POST['attempt'])) {
-            $this->loginService->loginAttempts();
-        }
         $blocked = $this->loginService->checkBlockTime();
+        if ($blocked === false) {
+            $errors = $this->loginService->loginAction($_POST);
+        }
         $this->loginService->loginRedirection();
+        $this->loginService->loginAttempts($errors, $_POST);
         echo $this->twig->render('/login/index.php.twig', ['errors' => $errors, 'post' => $_POST, 'blocked' => $blocked]);
     }
 
     public function registration()
     {
         $errors = null;
-        $errors = $this->loginService->registrationAction($_POST);
         $this->loginService->loginRedirection();
+        $errors = $this->loginService->registrationAction($_POST);
         echo $this->twig->render('/login/registration.php.twig', ['errors' => $errors, 'post' => $_POST]);
     }
 
@@ -43,26 +42,21 @@ class LoginController extends Controller
     {
         $success = null;
         $error = null;
+        $this->loginService->authorization();
+        $this->loginService->dashboardRedirection();
         if (isset($_FILES['file'], $_POST['id'])) {
             $data = $this->loginService->uploadFileAction($_FILES['file'], $_POST['id']);
             $success = $data['success'];
             $error = $data['error'];
         }
-        $this->loginService->checkSession();
-        $this->loginService->authorization(); 
         $user = $this->repository->getUserByEmail($_SESSION['email']);
         $files = $this->repository->getFiles($_SESSION['id']);
 
         echo $this->twig->render('/login/dashboard.php.twig', ['user' => $user, 'success' => $success, 'error' => $error, 'files' => $files]);
     }
 
-    public function cookieError()
-    {
-        echo $this->twig->render('/login/cookieError.php.twig');
-    }
-
     public function showFiles($userID)
-    {   
+    {
         $files = null;
         $user = null;
         if ($userID == $_SESSION['id']) {
