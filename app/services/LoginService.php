@@ -230,24 +230,6 @@ class LoginService
         ];
     }
 
-    public function dashboardRedirection()
-    {
-        if (!isset($_SESSION['auth'])) {
-            header('Location: /login/index');
-
-            return;
-        }
-    }
-
-    public function loginRedirection()
-    {
-        if (isset($_SESSION['auth'])) {
-            header('Location: /login/dashboard');
-
-            return;
-        }
-    }
-
     public function logOut()
     {
         setcookie('token', '', time(), '/');

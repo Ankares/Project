@@ -25,7 +25,11 @@ class LoginController extends Controller
         if ($blocked === false) {
             $errors = $this->loginService->loginAction($_POST);
         }
-        $this->loginService->loginRedirection();
+        if (isset($_SESSION['auth'])) {
+            header('Location: /login/dashboard');
+
+            return;
+        }
         $this->loginService->loginAttempts($errors, $_POST);
         echo $this->twig->render('/login/index.php.twig', ['errors' => $errors, 'post' => $_POST, 'blocked' => $blocked]);
     }
@@ -33,7 +37,11 @@ class LoginController extends Controller
     public function registration()
     {
         $errors = null;
-        $this->loginService->loginRedirection();
+        if (isset($_SESSION['auth'])) {
+            header('Location: /login/dashboard');
+
+            return;
+        }
         $errors = $this->loginService->registrationAction($_POST);
         echo $this->twig->render('/login/registration.php.twig', ['errors' => $errors, 'post' => $_POST]);
     }
@@ -43,7 +51,11 @@ class LoginController extends Controller
         $success = null;
         $error = null;
         $this->loginService->authorization();
-        $this->loginService->dashboardRedirection();
+        if (!isset($_SESSION['auth'])) {
+            header('Location: /login/index');
+
+            return;
+        }
         if (isset($_FILES['file'], $_POST['id'])) {
             $data = $this->loginService->uploadFileAction($_FILES['file'], $_POST['id']);
             $success = $data['success'];
