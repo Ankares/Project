@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS shopItems (
 	itemName VARCHAR(100) UNIQUE NOT NULL,
 	manufacturer VARCHAR(100) NOT NULL,
 	itemCost INT(50) NOT NULL,
+	itemImage VARCHAR(100) NOT NULL,
 	created_year INT(50) NOT NULL,
     warrantyPeriod VARCHAR(100) NOT NULL,
     warrantyCost INT(50) NOT NULL,
