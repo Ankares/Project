@@ -6,9 +6,9 @@ class ShopModel {
 
     public $serviceData = [
         'itemId' => '',
-        'warranty' => 'off',
-        'delivery' => 'off',
-        'setUp' => 'off'
+        'warranty' => '',
+        'delivery' => '',
+        'setUp' => ''
     ];
 
     public function setServiceData($data)

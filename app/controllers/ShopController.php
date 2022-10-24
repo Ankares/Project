@@ -32,17 +32,16 @@ class ShopController
     public function cart()
     {
         $items = null;
-        $data = null;
         if (!isset($_SESSION['auth'])) {
             header('Location: /login');
 
             return;
         }
         if (isset($_POST['itemId'])) {
-            $this->shopService->addItemToSession($_POST['itemId']);
-            $this->shopService->saveServiceData($_POST);
+            $this->shopService->addItemToSession($_POST);
         }
-        $items = $this->shopService->getItemsFromSession();
-        echo $this->twig->render('/shop/cart.php.twig', ['items' => $items, 'data' => $data]);
+        $session = $this->shopService->getSession();
+        $items = $this->shopService->getItemsInSessionFromDB();
+        echo $this->twig->render('/shop/cart.php.twig', ['items' => $items, 'session' => $session]);
     }
 }

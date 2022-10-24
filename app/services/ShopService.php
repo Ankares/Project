@@ -4,6 +4,10 @@ namespace App\Services;
 
 use App\Models\Repositories\ShopRepository;
 use App\Models\ShopModel;
+use Twig\TwigFilter;
+use Twig\TwigFunction;
+use Twig\Environment;
+use Twig\TwigTest;
 
 class ShopService
 {
@@ -11,36 +15,28 @@ class ShopService
 
     public function __construct(
         private readonly ShopRepository $shopRepository,
-        private readonly ShopModel $shopModel
+        private readonly ShopModel $shopModel,
+        private readonly Environment $twig,
     ) {}
 
-    public function addItemToSession($id)
+    public function addItemToSession($post)
     {
         $itemExist = false;
+        $this->shopModel->setServiceData($post);
+        $data = $this->shopModel->getServiceData();
         if (!$this->issetSession()) {
-            $_SESSION[$this->sessionName] = $id;
+            $_SESSION[$this->sessionName] = [$data];
             return;
         }
-        $items = explode(',', $_SESSION[$this->sessionName]);
-        foreach ($items as $item) {
-            if ($item === $id) {
+        foreach ($_SESSION[$this->sessionName] as $item) {
+            if ($item['itemId'] == $post['itemId']) {
                 $itemExist = true;
             }
         }
         if($itemExist === false) {
-            $_SESSION[$this->sessionName] = $_SESSION[$this->sessionName].','.$id;
-        }
-       
-    }
-
-    public function saveServiceData($post)
-    {
-        $itemExist = null;
-        $this->shopModel->setServiceData($post);
-        $data = $this->shopModel->getServiceData();
-        $itemExist = $this->shopRepository->getServiceDataFromDB($_SESSION['id'], $data['itemId']);
-        if (!$itemExist) {
-            $this->shopRepository->addServiceDataToDB($data, $_SESSION['id']);
+            $session = $_SESSION[$this->sessionName];
+            array_push($session, $data);  
+            $_SESSION[$this->sessionName] = $session;
         }
     }
 
@@ -49,17 +45,22 @@ class ShopService
         return isset($_SESSION[$this->sessionName]);
     }
 
-    private function getSession()
+    public function getSession()
     {
         return $_SESSION[$this->sessionName];
     }
 
-    public function getItemsFromSession()
+    public function getItemsInSessionFromDB()
     {
-        $items = null;
+        $items = [];
+        $idInSession = '';
         if ($this->issetSession()) {
             $session = $this->getSession();
-            $items = $this->shopRepository->getSessionItems($session);
+            foreach ($session as $item) {
+                $idInSession = $item['itemId'];
+                $itemFromDB = $this->shopRepository->getSessionItemsFromDB($idInSession);
+                array_push($items, $itemFromDB);
+            }            
         }
         return $items;
     }

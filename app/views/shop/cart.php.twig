@@ -9,18 +9,31 @@
     <div class="container">
         {% if items %}
             <h2 class="mt-5 mb-4 text-center">Shopping cart</h2>
-            <div class="list-group-item offset-md-1 offset-0 col-md-10 col-12 mb-4 mt-3 fs-5 p-4">
+            <div class="list-group-item col-10 offset-1 mb-4 mt-3 fs-5 p-4">
                 {% for item in items %}
-                    <h4>{{item['itemName']}}</h4>
-                    <div class="mx-4">
-                    {% if data['warranty'] %}
-                        <p class="mt-2">{{item['warrantyPeriod']}}</p>
-                    {% else %}
-                        <p class="mt-2">{{item['warrantyCost']}}</p> 
-                    {% endif %}        
-                    </div>
+                    {% for sessionItem in session %}
+                        {% if item['id'] == sessionItem['itemId'] %}
+                            <h4>{{item['itemName']}}</h4>
+                            <div class="mx-4">
+                                <img src="/public/shopItems/{{item['itemImage']|escape}}" class="img-fluid w-25 mb-2 mt-1" alt="{{item['itemImage']|escape}}">
+                                {% if sessionItem['warranty'] %}
+                                    <h5 class="mt-2">Warranty:</h5> 
+                                    <p class="mt-2">{{item['warrantyPeriod']}}, cost: {{item['warrantyCost']}} BYN</p>   
+                                {% endif %}
+                                {% if sessionItem['delivery'] %}
+                                    <h5 class="mt-2">Delivery:</h5> 
+                                    <p class="mt-2">{{item['deliveryPeriod']}}, cost: {{item['deliveryCost']}} BYN</p>   
+                                {% endif %}
+                                {% if sessionItem['setUp'] %}
+                                    <h5 class="mt-2">Set up:</h5> 
+                                    <p class="mt-2">cost: {{item['itemSetupCost']}} BYN</p>   
+                                {% endif %}
+                                <p class="mt-4">Total cost:</p>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    <hr>
                 {% endfor %}
-                <hr>
             </div>
         {% else %}
             <h2 class="mt-5 mb-4 text-center">There is no items in your cart</h2>
