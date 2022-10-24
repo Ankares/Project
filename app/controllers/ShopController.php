@@ -40,6 +40,7 @@ class ShopController
         }
         if (isset($_POST['itemId'])) {
             $this->shopService->addItemToSession($_POST['itemId']);
+            $this->shopService->saveServiceData($_POST);
         }
         $items = $this->shopService->getItemsFromSession();
         echo $this->twig->render('/shop/cart.php.twig', ['items' => $items, 'data' => $data]);

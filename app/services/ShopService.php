@@ -33,6 +33,17 @@ class ShopService
        
     }
 
+    public function saveServiceData($post)
+    {
+        $itemExist = null;
+        $this->shopModel->setServiceData($post);
+        $data = $this->shopModel->getServiceData();
+        $itemExist = $this->shopRepository->getServiceDataFromDB($_SESSION['id'], $data['itemId']);
+        if (!$itemExist) {
+            $this->shopRepository->addServiceDataToDB($data, $_SESSION['id']);
+        }
+    }
+
     private function issetSession()
     {
         return isset($_SESSION[$this->sessionName]);
