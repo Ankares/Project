@@ -28,7 +28,19 @@
                                     <h5 class="mt-2">Set up:</h5> 
                                     <p class="mt-2">cost: {{item['itemSetupCost']}} BYN</p>   
                                 {% endif %}
-                                <p class="mt-4">Total cost:</p>
+                                <p class="mt-4">
+                                    {% set summ = item['itemCost']%}
+                                    {% if sessionItem['warranty'] %}
+                                        {% set summ = summ + item['warrantyCost'] %}
+                                    {% endif %}
+                                    {% if sessionItem['delivery'] %}
+                                        {% set summ = summ + item['deliveryCost'] %}
+                                    {% endif %}
+                                    {% if sessionItem['setUp'] %}
+                                        {% set summ = summ + item['itemSetupCost'] %}
+                                    {% endif %}
+                                    Total cost: {{summ}} BYN
+                                </p>
                             </div>
                         {% endif %}
                     {% endfor %}

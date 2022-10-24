@@ -47,7 +47,9 @@ class ShopService
 
     public function getSession()
     {
-        return $_SESSION[$this->sessionName];
+        if($this->issetSession()) {
+            return $_SESSION[$this->sessionName];
+        }
     }
 
     public function getItemsInSessionFromDB()
