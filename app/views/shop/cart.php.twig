@@ -22,7 +22,7 @@
                                 {% endif %}
                                 {% if sessionItem['delivery'] %}
                                     <h5 class="mt-2">Delivery:</h5> 
-                                    <p class="mt-2">{{item['deliveryPeriod']}}, cost: {{item['deliveryCost']}} BYN</p>   
+                                    <p class="mt-2">{{item['deliveryPeriod']|date('Y-m-d')}}, cost: {{item['deliveryCost']}} BYN</p>   
                                 {% endif %}
                                 {% if sessionItem['setUp'] %}
                                     <h5 class="mt-2">Set up:</h5> 

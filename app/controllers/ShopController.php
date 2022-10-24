@@ -33,7 +33,7 @@ class ShopController
     {
         $items = null;
         if (!isset($_SESSION['auth'])) {
-            header('Location: /login');
+            header('Location: /login/dashboard');
 
             return;
         }
