@@ -36,7 +36,7 @@ class LoginRepository implements ILoginProcessing
 
     public function setLoginAttemptsData($ip, $attempts)
     {
-        $sql = 'INSERT INTO loginAttempts(userIP, attempts) VALUES(:userIP, :attempts)';
+        $sql = "INSERT INTO loginAttempts(userIP, attempts) VALUES(:userIP, :attempts) ON DUPLICATE KEY UPDATE attempts = '$attempts'";
         $query = $this->db->prepare($sql);
         $query->execute(['userIP' => $ip, 'attempts' => $attempts]);
     }
@@ -46,11 +46,6 @@ class LoginRepository implements ILoginProcessing
         $sql = $this->db->query("SELECT * FROM loginAttempts WHERE userIP = '$ip'");
 
         return $sql->fetch(\PDO::FETCH_ASSOC);
-    }
-
-    public function updateLoginAttempts($count, $ip)
-    {
-        $this->db->query("UPDATE loginAttempts SET attempts = '$count' WHERE userIP = '$ip'");
     }
 
     public function updateBlockTime($time, $ip)

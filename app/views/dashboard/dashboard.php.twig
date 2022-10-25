@@ -4,7 +4,7 @@
 {% endblock %}
 {% block body %}
 <div class="container mt-5 p-3">
-    <form action="/login/exit" method="post">
+    <form action="/dashboard/exit" method="post">
         <input type="hidden" name="logout">
         <div class="offset-md-1 offset-0 col-12 col-md-10 d-flex justify-content-between mb-3">
             <a class="btn btn-outline-primary fs-5 px-3 float-start me-2" href="/home">Home page</a>
@@ -14,7 +14,7 @@
     <ul class="list-group">
         <li class="list-group-item offset-md-1 offset-0 col-md-10 col-12 mb-4 fs-5 p-4">
             <h1 class="text-center mt-4">Welcome back, {{user['name']|escape}}</h1>
-            <form action="/login/dashboard" method="post" enctype="multipart/form-data" oninput="checkLoginForm(['.inp_file'], '.displayButton')"> 
+            <form action="/dashboard" method="post" enctype="multipart/form-data" oninput="checkLoginForm(['.inp_file'], '.displayButton')"> 
                 <div class="col-8 mt-4">
                     <p class="fs-2">Files:</p>
                     {% if files is empty %}
@@ -25,7 +25,7 @@
                         <p class="form-control-plaintext">
                             Found {{files|length|escape}} files
                         </p>
-                         <a href="/login/showFiles/{{user['id']}}" class="outfit btn btn-outline-primary p-2 mb-4 px-3">Show files</a>
+                         <a href="/dashboard/showFiles/{{user['id']}}" class="outfit btn btn-outline-primary p-2 mb-4 px-3">Show files</a>
                     {% endif %}
                     
                     <input type="hidden" name="id" value="{{user['id']}}">

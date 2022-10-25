@@ -4,10 +4,7 @@ namespace App\Services;
 
 use App\Models\Repositories\ShopRepository;
 use App\Models\ShopModel;
-use Twig\TwigFilter;
-use Twig\TwigFunction;
 use Twig\Environment;
-use Twig\TwigTest;
 
 class ShopService
 {
