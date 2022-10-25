@@ -2,8 +2,10 @@
 
 namespace App\Models\Repositories\Interfaces;
 
-interface iShopProcessing
+use App\Catalog;
+
+interface IShopProcessing
 {
-    public function getShopItems();
-    public function getOneItem($id);
+    public function getAllProducts(Catalog $catalogObj);
+    public function getOneProduct(Catalog $catalogObj, $name);
 }

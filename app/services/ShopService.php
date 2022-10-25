@@ -2,9 +2,10 @@
 
 namespace App\Services;
 
+use App\Catalog;
+use App\Models\Repositories\ServicesRepository;
 use App\Models\Repositories\ShopRepository;
 use App\Models\ShopModel;
-use Twig\Environment;
 
 class ShopService
 {
@@ -12,23 +13,27 @@ class ShopService
 
     public function __construct(
         private readonly ShopRepository $shopRepository,
+        private readonly ServicesRepository $servicesRepository,
         private readonly ShopModel $shopModel,
-        private readonly Environment $twig,
+        private readonly Catalog $catalog
     ) {}
 
     public function addItemToSession($post)
     {
+        if (!$post) {
+            return;
+        }
         $itemExist = false;
-        $this->shopModel->setServiceData($post);
-        $data = $this->shopModel->getServiceData();
+        $this->servicesRepository->setProductData($this->shopModel, $post);
+        $data = $this->shopRepository->getProductData($this->shopModel);
         if (!$this->issetSession()) {
             $_SESSION[$this->sessionName] = [$data];
             return;
         }
         foreach ($_SESSION[$this->sessionName] as $item) {
-            if ($item['itemId'] == $post['itemId']) {
+            if ($item && $item['itemName'] == $post['itemName']) {
                 $itemExist = true;
-            }
+            } 
         }
         if($itemExist === false) {
             $session = $_SESSION[$this->sessionName];
@@ -49,16 +54,18 @@ class ShopService
         }
     }
 
-    public function getItemsInSessionFromDB()
+    public function getItemsInSessionFromCatalog()
     {
         $items = [];
-        $idInSession = '';
+        $itemInSession = '';
         if ($this->issetSession()) {
             $session = $this->getSession();
             foreach ($session as $item) {
-                $idInSession = $item['itemId'];
-                $itemFromDB = $this->shopRepository->getSessionItemsFromDB($idInSession);
-                array_push($items, $itemFromDB);
+                if ($item) {
+                    $itemInSession = $item['itemName'];
+                    $itemFromCatalog = $this->shopRepository->getOneProduct($this->catalog, $itemInSession);
+                    array_push($items, $itemFromCatalog);
+                }
             }            
         }
         return $items;

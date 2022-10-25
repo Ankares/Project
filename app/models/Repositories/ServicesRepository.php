@@ -2,18 +2,17 @@
 
 namespace App\Models\Repositories;
 
-use App\Models\Repositories\Abstracts\AbstractShopItems;
 use App\Catalog;
+use App\Models\Repositories\Abstracts\AbstractItemServices;
 use App\Models\ShopModel;
 
-class ShopRepository extends AbstractShopItems
+class ServicesRepository extends AbstractItemServices
 {
-    
-    public function getProductData(ShopModel $model)
+    public function setProductData(ShopModel $model, $services)
     {
-        return $model->getChosenItemData();
+        $model->setChosenItemData($services);
     }
-    
+
     public function getAllProducts(Catalog $catalogObj)
     {
         $items = [];
@@ -33,5 +32,4 @@ class ShopRepository extends AbstractShopItems
         }
         return $neededItem;
     }
-
 }

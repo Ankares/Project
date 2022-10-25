@@ -3,27 +3,27 @@
 namespace App\Models;
 
 class ShopModel {
-
-    public $serviceData = [
-        'itemId' => '',
+    
+    private $chosenItemData = [
+        'itemName' => '',
         'warranty' => '',
         'delivery' => '',
         'setUp' => ''
     ];
 
-    public function setServiceData($data)
+    public function setChosenItemData($data)
     {
         foreach ($data as $key => $value) {
-            if (array_key_exists($key, $this->serviceData)) {
-                $this->serviceData[$key] = $value;
+            if (array_key_exists($key, $this->chosenItemData)) {
+                $this->chosenItemData[$key] = $value;
             }
         }
     } 
 
-    public function getServiceData()
+    public function getChosenItemData()
     {
         $settedData = [];
-        $data = $this->serviceData;
+        $data = $this->chosenItemData;
         foreach($data as $key => $value) {
             if ($value) {
                 $settedData[$key] = $value;
