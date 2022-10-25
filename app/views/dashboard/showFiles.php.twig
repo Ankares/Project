@@ -15,7 +15,7 @@
                         {% for file in files %}
                             <div class="form-group">
                                 <hr>
-                                <form action="/login/deleteFile" method="post" onsubmit="return confirm('Are you sure?');">
+                                <form action="/dashboard/deleteFile" method="post" onsubmit="return confirm('Are you sure?');">
                                     <button class="btn btn-outline-danger offset-md-10 offset-8 col-md-2 col-4 mb-3">Delete</button>
                                     <input type="hidden" name="pathToDelete" value="{{file['path']|escape}}">
                                     <input type="hidden" name="userId" value="{{user['id']|escape}}">

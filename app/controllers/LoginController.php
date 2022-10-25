@@ -3,7 +3,6 @@
 namespace App\Controllers;
 
 use App\Core\Controller;
-use App\Models\LoginModel;
 use App\Models\Repositories\LoginRepository;
 use App\Services\LoginService;
 use Twig\Environment;
@@ -11,7 +10,6 @@ use Twig\Environment;
 class LoginController extends Controller
 {
     public function __construct(
-        private readonly LoginModel $user,
         private readonly LoginRepository $repository,
         private readonly LoginService $loginService,
         private readonly Environment $twig,
@@ -20,74 +18,30 @@ class LoginController extends Controller
 
     public function index()
     {
-        $errors = null;
-        $blocked = $this->loginService->checkBlockTime();
-        if ($blocked === false) {
-            $errors = $this->loginService->loginAction($_POST);
-        }
-        if (isset($_SESSION['auth'])) {
-            header('Location: /login/dashboard');
+        if ($this->loginService->checkBlockTime()) {
+            echo $this->twig->render('/login/index.php.twig', ['errors' => [], 'blocked' => true]);
 
             return;
         }
-        $this->loginService->loginAttempts($errors, $_POST);
-        echo $this->twig->render('/login/index.php.twig', ['errors' => $errors, 'post' => $_POST, 'blocked' => $blocked]);
+        if (!empty($_POST)) {
+            $errors = $this->loginService->loginAction($_POST);
+        }
+        if (isset($_SESSION['auth'])) {
+            header('Location: /dashboard');
+
+            return;
+        }
+        echo $this->twig->render('/login/index.php.twig', ['errors' => $errors ?? null, 'post' => $_POST, 'blocked' => false]);
     }
 
     public function registration()
     {
-        $errors = null;
-        if (isset($_SESSION['auth'])) {
-            header('Location: /login/dashboard');
-
-            return;
-        }
         $errors = $this->loginService->registrationAction($_POST);
-        echo $this->twig->render('/login/registration.php.twig', ['errors' => $errors, 'post' => $_POST]);
-    }
-
-    public function dashboard()
-    {
-        $success = null;
-        $error = null;
-        $this->loginService->authorization();
-        if (!isset($_SESSION['auth'])) {
-            header('Location: /login/index');
+        if (isset($_SESSION['auth'])) {
+            header('Location: /dashboard');
 
             return;
         }
-        if (isset($_FILES['file'], $_POST['id'])) {
-            $data = $this->loginService->uploadFileAction($_FILES['file'], $_POST['id']);
-            $success = $data['success'];
-            $error = $data['error'];
-        }
-        $user = $this->repository->getUserByEmail($_SESSION['email']);
-        $files = $this->repository->getFiles($_SESSION['id']);
-
-        echo $this->twig->render('/login/dashboard.php.twig', ['user' => $user, 'success' => $success, 'error' => $error, 'files' => $files]);
-    }
-
-    public function showFiles($userID)
-    {
-        $files = null;
-        $user = null;
-        if ($userID == $_SESSION['id']) {
-            $files = $this->repository->getFiles($userID);
-            $user = $this->repository->getUserById($userID);
-        }
-        echo $this->twig->render('/login/showFiles.php.twig', ['files' => $files, 'user' => $user]);
-    }
-
-    public function deleteFile()
-    {
-        $this->loginService->deleteFileFromDashboard($_POST['pathToDelete']);
-    }
-
-    public function exit()
-    {
-        if (isset($_POST['logout'])) {
-            $this->loginService->logOut();
-            exit();
-        }
+        echo $this->twig->render('/login/registration.php.twig', ['errors' => $errors ?? null, 'post' => $_POST]);
     }
 }

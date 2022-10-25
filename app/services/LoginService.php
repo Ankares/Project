@@ -9,6 +9,8 @@ use App\Models\Repositories\LoginRepository;
 
 class LoginService
 {
+    public const BLOCKTIME = 15;
+
     public function __construct(
         private readonly LoginModel $user,
         private readonly LoginRepository $repository,
@@ -18,34 +20,27 @@ class LoginService
     ) {
     }
 
-    public function loginAttempts($errors, $post)
+    private function incrementLoginAttempts($email)
     {
-        if (isset($errors)) {
-            $ip = $_SERVER['REMOTE_ADDR'];
-            $attempts = 1;
-            $time = date('Y-m-d H:i:s');
-            $endTime = date('Y-m-d H:i:s', strtotime('+15 minutes'));
-            $data = $this->repository->getLoginAttemptsData($ip);
-            if (!isset($data['userIP'])) {
-                $this->repository->setLoginAttemptsData($ip, $attempts);
-            } else {
-                $this->repository->updateLoginAttempts($data['attempts'] + 1, $ip);
-            }
-            if (isset($data['attempts']) && $data['attempts'] >= 2) {
-                $this->repository->updateBlockTime($time, $ip);
-                $this->authLog->error(
-                    '',
-                    [
-                        'ip' => $ip,
-                        'email' => $post['email'],
-                        'blockStart' => $time,
-                        'blockEnd' => $endTime,
-                        'path' => 'authLogs.log',
-                    ]
-                );
+        $ip = $_SERVER['REMOTE_ADDR'];
+        $time = date('Y-m-d H:i:s');
+        $endTime = date('Y-m-d H:i:s', strtotime(self::BLOCKTIME.'minutes'));
+        $data = $this->repository->getLoginAttemptsData($ip);
+        !$data ? $this->repository->setLoginAttemptsData($ip, 1) : $this->repository->setLoginAttemptsData($ip, $data['attempts'] + 1);
+        if (isset($data['attempts']) && $data['attempts'] >= 2) {
+            $this->repository->updateBlockTime($time, $ip);
+            $this->authLog->error(
+                '',
+                [
+                    'ip' => $ip,
+                    'email' => $email,
+                    'blockStart' => $time,
+                    'blockEnd' => $endTime,
+                    'path' => 'authLogs.log',
+                ]
+            );
 
-                return;
-            }
+            return;
         }
     }
 
@@ -57,10 +52,10 @@ class LoginService
         if (isset($data['blockTime'])) {
             $blockTime = $data['blockTime'];
             $diff = ((time() - strtotime($blockTime)) / 60);
-            if ($diff >= 15) {
+            if ($diff >= self::BLOCKTIME) {
                 $blocked = false;
                 $this->repository->clearBlockTime($ip);
-                $this->repository->updateLoginAttempts(0, $ip);
+                $this->repository->setLoginAttemptsData($ip, 0);
             } else {
                 $blocked = true;
             }
@@ -99,17 +94,19 @@ class LoginService
     public function loginAction($post)
     {
         $errors = null;
-        if (isset($post['email'])) {
-            $this->user->setData($post);
-            $this->checkLoginData($this->user, $post['email'], $post['password']);
-            $this->user->loginValidation();
-            if (true === $this->user->checkErrors()) {
-                $this->repository->updateLoginAttempts(0, $_SERVER['REMOTE_ADDR']);
-                $currentUser = $this->repository->getUserByEmail($post['email']);
-                isset($post['remember']) ? $this->setCookie($currentUser) : $this->setSession($currentUser);
-            } else {
-                $errors = $this->user->error;
-            }
+        if (!isset($post['email'])) {
+            return;
+        }
+        $this->user->setData($post);
+        $this->checkLoginData($this->user, $post['email'], $post['password']);
+        $this->user->loginValidation();
+        if (true === $this->user->checkErrors()) {
+            $this->repository->setLoginAttemptsData($_SERVER['REMOTE_ADDR'], 0);
+            $currentUser = $this->repository->getUserByEmail($post['email']);
+            isset($post['remember']) ? $this->setCookie($currentUser) : $this->setSession($currentUser);
+        } else {
+            $errors = $this->user->error;
+            $this->incrementLoginAttempts($post['email']);
         }
 
         return $errors;
@@ -118,17 +115,18 @@ class LoginService
     public function registrationAction($post)
     {
         $errors = null;
-        if (isset($post['email'])) {
-            $this->user->setData($post);
-            $this->checkRegisterData($this->user, $post['email']);
-            $this->user->registerValidation();
-            if (true === $this->user->checkErrors()) {
-                $this->registerUser($this->user);
-                $currentUser = $this->repository->getUserByEmail($post['email']);
-                $this->setSession($currentUser);
-            } else {
-                $errors = $this->user->error;
-            }
+        if (!isset($post['email'])) {
+            return;
+        }
+        $this->user->setData($post);
+        $this->checkRegisterData($this->user, $post['email']);
+        $this->user->registerValidation();
+        if (true === $this->user->checkErrors()) {
+            $this->registerUser($this->user);
+            $currentUser = $this->repository->getUserByEmail($post['email']);
+            $this->setSession($currentUser);
+        } else {
+            $errors = $this->user->error;
         }
 
         return $errors;
@@ -178,7 +176,7 @@ class LoginService
             $this->fileUploader->deleteFromDir($path);
             $this->fileUploader->deleteEmptyDir($path);
         }
-        header('Location: /login/showFiles/'.$_POST['userId']);
+        header('Location: /dashboard/showFiles/'.$_POST['userId']);
     }
 
     public function setSession($user)
@@ -194,7 +192,7 @@ class LoginService
         $token = md5(uniqid().time());
         setcookie('token', $token, time() + 3600 * 24 * 7, '/');
         $this->repository->addCookie($token, $email);
-        header('Location: /login/dashboard');
+        header('Location: /dashboard');
 
         return;
     }
