@@ -55,12 +55,12 @@ class UserController extends Controller
                 if ($fileInfo['fileName'] != '') {
                     $pathForDB = $this->fileUploader->moveFile($_FILES['file']);
                     $this->repository->addFile($_POST['id'], $fileInfo['fileName'], $pathForDB, $fileInfo['fileSize']);
-                    $this->fileLog->info('', [$_FILES['file'], 'Info: File successfully added']);
+                    $this->fileLog->info('', ['fileName' => $_FILES['file']['name'], 'fileSize' => $_FILES['file']['size'], 'path' => 'fileLogs.log', 'status' => 'Info: File successfully added']);
                 }
                 $data['success'] = 'Successfully updated';
             } else {
                 $data['error'] = [$this->user->error, $fileInfo['error']];
-                $this->fileLog->error('', [$_FILES['file'], $fileInfo['error']]);
+                $this->fileLog->error('', ['fileName' => $_FILES['file']['name'], 'fileSize' => $_FILES['file']['size'], 'path' => 'fileLogs.log', 'status' => $fileInfo['error']]);
             }
         }
         $data['user'] = $this->repository->getDataByID($id);

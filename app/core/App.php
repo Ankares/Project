@@ -4,17 +4,9 @@ namespace App\Core;
 
 session_start();
 
-use App\Controllers\LoginController;
-use App\Controllers\UserController;
 use App\Services\ServiceProvider;
-use App\Services\FileUpload;
-use App\Services\LoginService;
-use App\Logs\LoggingFiles;
 use App\Models\UserModel;
-use App\Models\LoginModel;
 use App\Models\Repositories\Interfaces\IUserProcessing;
-use App\Models\Repositories\LoginRepository;
-use App\Models\Repositories\UserRepository;
 use Twig\Loader\FilesystemLoader;
 use Twig\Environment;
 

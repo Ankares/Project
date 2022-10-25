@@ -38,12 +38,6 @@
             <input type="password" name="repeatPassword" class="inp_repeat_password form-control mb-2" placeholder="Repeat password">  
         </div>
         <p class="error mt-3 fw-bold fs-5 text-danger">{{errors['repeatPasswordError']|escape}}</p>
-    
-        {% if success %}
-            <div class="success mt-3 fw-bold fs-4 text-success">
-                {{success|escape}}
-            </div>
-        {% endif %}
       
         <button type="submit" class="displayButton d-none btn btn-primary mt-3 mb-3 p-2 col-md-4 col-8">Registration</button>    
     </form>

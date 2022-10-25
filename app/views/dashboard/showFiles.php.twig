@@ -1,0 +1,45 @@
+{% extends '/layout/layout.html.twig' %}
+
+{% block title %}
+    Show files
+{% endblock %}
+
+{% block body %}
+
+    <div class="container">
+        {% if user['id'] is not empty %}
+            <h2 class="mt-5 mb-5 fs-1 text-center">Files</h2>
+                <ul class="list-group">
+                    <li class="list-group-item offset-md-1 offset-0 col-md-10 col-12 mb-4 fs-5 p-4">
+                    <a href="/login/dashboard" class="btn btn-outline-primary col-md-2 col-4 mb-4">Return</a> 
+                        {% for file in files %}
+                            <div class="form-group">
+                                <hr>
+                                <form action="/dashboard/deleteFile" method="post" onsubmit="return confirm('Are you sure?');">
+                                    <button class="btn btn-outline-danger offset-md-10 offset-8 col-md-2 col-4 mb-3">Delete</button>
+                                    <input type="hidden" name="pathToDelete" value="{{file['path']|escape}}">
+                                    <input type="hidden" name="userId" value="{{user['id']|escape}}">
+                                    {% if ('txt' in file['file']) or ('docx' in file['file']) %}
+                                        <p>{{file['file']|escape}}</p>
+                                    {% else %}
+                                        <button type="button" class="trigger-menu btn btn-outline-secondary col-12 mb-3">Show image: {{file['file']|escape}}</button>
+                                        <img src="/public/userFiles/{{file['path']|escape}}" class="img-thumbnail">
+                                    {% endif %}
+                                </form>
+                            </div>
+                        {% endfor %}
+                    </li>
+                </ul>
+            
+        {% else %}
+            <h1 class="mt-5 text-center">Showing files</h1>
+            <h4 class="mt-5 text-center">You can see only your own files</h4>
+            <a href="/home" class="btn btn-outline-primary mt-4 offset-4 col-4 text-center">Return to home page</a>
+        {% endif %}
+    </div>
+        
+{% endblock %}
+    
+{%  block js %}
+    <script src="/app/js/script.js"></script>
+{% endblock %}
