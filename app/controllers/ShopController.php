@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 use App\Catalog;
 use App\Models\Repositories\ShopRepository;
-use App\Models\ShopModel;
+use App\Services\CartService;
 use App\Services\ShopService;
 use Twig\Environment;
 
@@ -12,10 +12,10 @@ class ShopController
 {
     public function __construct(
         private readonly ShopService $shopService,
-        private readonly Environment $twig,
-        private readonly ShopModel $shopModel,
+        private readonly CartService $cartService,
         private readonly ShopRepository $shopRepository,
-        private readonly Catalog $catalog
+        private readonly Catalog $catalog,
+        private readonly Environment $twig 
     )
     {}
 
@@ -25,10 +25,11 @@ class ShopController
         echo $this->twig->render('/shop/index.php.twig', ['items' => $items]);
     }
 
-    public function services($name)
+    public function services($id)
     {
-        $oneItem = $this->shopRepository->getOneProduct($this->catalog, $name);
-        echo $this->twig->render('/shop/additionalServices.php.twig', ['item' => $oneItem]);
+        $oneItem = $this->shopRepository->getOneProduct($this->catalog, $id);
+        $itemServices = $this->shopRepository->getProductServices($this->catalog, $id);
+        echo $this->twig->render('/shop/additionalServices.php.twig', ['item' => $oneItem, 'itemServices' => $itemServices]);
     }
 
     public function cart()
@@ -38,11 +39,11 @@ class ShopController
 
             return;
         }
-        if (isset($_POST['itemName'])) {
+        if (isset($_POST['itemId'])) {
             $this->shopService->addItemToSession($_POST);
         }
         $session = $this->shopService->getSession();
-        $items = $this->shopService->getItemsInSessionFromCatalog();
+        $items = $this->cartService->getItemsFromSession();
         echo $this->twig->render('/shop/cart.php.twig', ['items' => $items ?? null, 'session' => $session]);
     }
 }

@@ -18,7 +18,7 @@
                         <p class="card-text">Manufacturer: {{item['manufacturer']|escape}}</p>
                         <p class="card-text">Year: {{item['created']|escape}}</p>
                         <p class="card-text mb-5">Price: {{item['price']|escape}} BYN</p>
-                        <a href="/shop/services/{{item['item']|escape}}" class="btn btn-outline-primary col-12 position-absolute bottom-0 start-0 rounded-0 rounded-bottom">Add</a>
+                        <a href="/shop/services/{{item['id']|escape}}" class="btn btn-outline-primary col-12 position-absolute bottom-0 start-0 rounded-0 rounded-bottom">Add</a>
                     </div>
                 </div>
             {% endfor %}

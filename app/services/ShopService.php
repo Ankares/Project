@@ -3,9 +3,9 @@
 namespace App\Services;
 
 use App\Catalog;
-use App\Models\Repositories\ServicesRepository;
 use App\Models\Repositories\ShopRepository;
-use App\Models\ShopModel;
+use App\Models\ShopItemsModel;
+use App\Models\ShopServicesModel;
 
 class ShopService
 {
@@ -13,36 +13,12 @@ class ShopService
 
     public function __construct(
         private readonly ShopRepository $shopRepository,
-        private readonly ServicesRepository $servicesRepository,
-        private readonly ShopModel $shopModel,
+        private readonly ShopItemsModel $itemModel,
+        private readonly ShopServicesModel $servicesModel,
         private readonly Catalog $catalog
     ) {}
-
-    public function addItemToSession($post)
-    {
-        if (!$post) {
-            return;
-        }
-        $itemExist = false;
-        $this->servicesRepository->setProductData($this->shopModel, $post);
-        $data = $this->shopRepository->getProductData($this->shopModel);
-        if (!$this->issetSession()) {
-            $_SESSION[$this->sessionName] = [$data];
-            return;
-        }
-        foreach ($_SESSION[$this->sessionName] as $item) {
-            if ($item && $item['itemName'] == $post['itemName']) {
-                $itemExist = true;
-            } 
-        }
-        if($itemExist === false) {
-            $session = $_SESSION[$this->sessionName];
-            array_push($session, $data);  
-            $_SESSION[$this->sessionName] = $session;
-        }
-    }
-
-    private function issetSession()
+    
+    public function issetSession()
     {
         return isset($_SESSION[$this->sessionName]);
     }
@@ -54,20 +30,52 @@ class ShopService
         }
     }
 
-    public function getItemsInSessionFromCatalog()
+    private function setItemAndServicesData($post)
     {
-        $items = [];
-        $itemInSession = '';
-        if ($this->issetSession()) {
-            $session = $this->getSession();
-            foreach ($session as $item) {
-                if ($item) {
-                    $itemInSession = $item['itemName'];
-                    $itemFromCatalog = $this->shopRepository->getOneProduct($this->catalog, $itemInSession);
-                    array_push($items, $itemFromCatalog);
-                }
-            }            
+        $this->itemModel->setData($post);
+        $this->servicesModel->setData($post);
+    }
+
+    private function getItemAndServicesData()
+    {
+        $item = $this->itemModel->getData();
+        $services = $this->servicesModel->getData();
+
+        if ($item['itemId'] == $services['itemId']) {
+            return [
+                'item' => $item,
+                'services' => $services
+            ];
         }
-        return $items;
+    }
+
+    public function addItemToSession($post)
+    {
+        $itemExist = false;
+
+        if (!$post) {
+            return;
+        }
+
+        $this->setItemAndServicesData($post);
+        $itemData = $this->getItemAndServicesData();
+        $data = [...$itemData['item'],...$itemData['services']];
+
+        if (!$this->issetSession()) {
+            $_SESSION[$this->sessionName] = [$data];
+            return;
+        }
+
+        foreach ($_SESSION[$this->sessionName] as $item) {
+            if ($item && $item['itemId'] == $post['itemId']) {
+                $itemExist = true;
+            } 
+        }
+
+        if($itemExist === false) {
+            $session = $_SESSION[$this->sessionName];
+            array_push($session, $data);  
+            $_SESSION[$this->sessionName] = $session;
+        }
     }
 }

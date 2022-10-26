@@ -12,35 +12,35 @@
             <div class="list-group-item col-10 offset-1 mb-4 mt-3 fs-5 p-4">
                 {% for item in items %}
                     {% for sessionItem in session %}
-                        {% if item['item'] == sessionItem['itemName'] %}
+                        {% if item['id'] == sessionItem['itemId'] %}
                             <h4>{{item['item']}}</h4>
                             <div class="mx-4">
                                 <img src="/public/shopItems/{{item['image']|escape}}" class="img-fluid w-25 mb-2 mt-1" alt="{{item['image']|escape}}">
 
-                                {% if sessionItem['warranty'] %}
+                                {% if item['warrantyPeriod'] %}
                                     <h5 class="mt-2">Warranty:</h5> 
-                                    <p class="mt-2">{{item['warranty']}}, cost: {{item['warrantyCost']}} BYN</p>   
+                                    <p class="mt-2">{{item['warrantyPeriod']}}, cost: {{item['warrantyCost']}} BYN</p>   
                                 {% endif %}
 
-                                {% if sessionItem['delivery'] %}
+                                {% if item['deliveryPeriod'] %}
                                     <h5 class="mt-2">Delivery:</h5> 
-                                    <p class="mt-2">{{item['delivery']|date('Y-m-d')}}, cost: {{item['deliveryCost']}} BYN</p>   
+                                    <p class="mt-2">{{item['deliveryPeriod']|date('Y-m-d')}}, cost: {{item['deliveryCost']}} BYN</p>   
                                 {% endif %}
 
-                                {% if sessionItem['setUp'] %}
+                                {% if item['setupCost'] %}
                                     <h5 class="mt-2">Set up:</h5> 
                                     <p class="mt-2">cost: {{item['setupCost']}} BYN</p>   
                                 {% endif %}
 
                                 <p class="mt-4">
                                     {% set summ = item['price']%}
-                                    {% if sessionItem['warranty'] %}
+                                    {% if item['warrantyPeriod'] %}
                                         {% set summ = summ + item['warrantyCost'] %}
                                     {% endif %}
-                                    {% if sessionItem['delivery'] %}
+                                    {% if item['deliveryPeriod'] %}
                                         {% set summ = summ + item['deliveryCost'] %}
                                     {% endif %}
-                                    {% if sessionItem['setUp'] %}
+                                    {% if item['setupCost'] %}
                                         {% set summ = summ + item['setupCost'] %}
                                     {% endif %}
                                     Total cost: {{summ}} BYN
