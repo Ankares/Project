@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Catalog;
 use App\Models\Repositories\ShopRepository;
 use App\Models\ShopItemsModel;
 use App\Models\ShopServicesModel;
@@ -15,9 +14,9 @@ class ShopService
         private readonly ShopRepository $shopRepository,
         private readonly ShopItemsModel $itemModel,
         private readonly ShopServicesModel $servicesModel,
-        private readonly Catalog $catalog
-    ) {}
-    
+    ) {
+    }
+
     public function issetSession()
     {
         return isset($_SESSION[$this->sessionName]);
@@ -25,7 +24,7 @@ class ShopService
 
     public function getSession()
     {
-        if($this->issetSession()) {
+        if ($this->issetSession()) {
             return $_SESSION[$this->sessionName];
         }
     }
@@ -38,13 +37,13 @@ class ShopService
 
     private function getItemAndServicesData()
     {
-        $item = $this->itemModel->getData();
+        $product = $this->itemModel->getData();
         $services = $this->servicesModel->getData();
 
-        if ($item['itemId'] == $services['itemId']) {
+        if ($product['itemId'] == $services['itemId']) {
             return [
-                'item' => $item,
-                'services' => $services
+                'product' => $product,
+                'services' => $services,
             ];
         }
     }
@@ -59,22 +58,23 @@ class ShopService
 
         $this->setItemAndServicesData($post);
         $itemData = $this->getItemAndServicesData();
-        $data = [...$itemData['item'],...$itemData['services']];
+        $data = [...$itemData['product'], ...$itemData['services']];
 
         if (!$this->issetSession()) {
             $_SESSION[$this->sessionName] = [$data];
+
             return;
         }
 
-        foreach ($_SESSION[$this->sessionName] as $item) {
-            if ($item && $item['itemId'] == $post['itemId']) {
+        foreach ($_SESSION[$this->sessionName] as $product) {
+            if ($product && $product['itemId'] == $post['itemId']) {
                 $itemExist = true;
-            } 
+            }
         }
 
-        if($itemExist === false) {
+        if ($itemExist === false) {
             $session = $_SESSION[$this->sessionName];
-            array_push($session, $data);  
+            array_push($session, $data);
             $_SESSION[$this->sessionName] = $session;
         }
     }

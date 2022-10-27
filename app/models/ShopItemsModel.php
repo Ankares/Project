@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-use App\Models\Repositories\Abstracts\AbstractShopItemsProcessing;
+use App\Models\Repositories\Abstracts\AbstractShopData;
 
-class ShopItemsModel extends AbstractShopItemsProcessing {
-    
+class ShopItemsModel extends AbstractShopData
+{
     private $chosenItemData = [
         'itemId' => '',
-        'itemName' => ''
+        'itemName' => '',
     ];
 
     public function setData($itemData)
@@ -18,17 +18,18 @@ class ShopItemsModel extends AbstractShopItemsProcessing {
                 $this->chosenItemData[$key] = $value;
             }
         }
-    } 
+    }
 
     public function getData()
     {
         $settedItemData = [];
         $data = $this->chosenItemData;
-        foreach($data as $key => $value) {
+        foreach ($data as $key => $value) {
             if ($value) {
                 $settedItemData[$key] = $value;
             }
         }
+
         return $settedItemData;
     }
 }

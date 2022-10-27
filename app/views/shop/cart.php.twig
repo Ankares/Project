@@ -33,18 +33,13 @@
                                 {% endif %}
 
                                 <p class="mt-4">
-                                    {% set summ = item['price']%}
-                                    {% if item['warrantyPeriod'] %}
-                                        {% set summ = summ + item['warrantyCost'] %}
+                                    {% if item['totalPrice'] %}
+                                        Total Price: {{item['totalPrice']|escape}} BYN
+                                    {% else %}
+                                        Total Price: {{item['price']|escape}} BYN
                                     {% endif %}
-                                    {% if item['deliveryPeriod'] %}
-                                        {% set summ = summ + item['deliveryCost'] %}
-                                    {% endif %}
-                                    {% if item['setupCost'] %}
-                                        {% set summ = summ + item['setupCost'] %}
-                                    {% endif %}
-                                    Total cost: {{summ}} BYN
                                 </p>
+
                             </div>
                         {% endif %}
                     {% endfor %}

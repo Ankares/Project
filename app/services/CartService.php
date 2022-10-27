@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Catalog;
 use App\Models\Repositories\ShopRepository;
-use App\Services\ShopService;
 
 class CartService
 {
@@ -12,39 +11,54 @@ class CartService
         private readonly ShopService $shopService,
         private readonly ShopRepository $shopRepository,
         private readonly Catalog $catalog
-    ){}
-    
-    public function getItemsFromSession()
+    ) {
+    }
+
+    private function createArrayWithSelectedServices($product, $productServices, $sessionProduct)
     {
-        $itemsWithChosenServices = [];
-        $itemInSession = '';
-        if ($this->shopService->issetSession()) {
-            $session = $this->shopService->getSession();
-            foreach ($session as $sessionItem) {
-                if ($sessionItem) {
-                    $itemInSession = $sessionItem['itemId'];
-                    $item = $this->shopRepository->getOneProduct($this->catalog, $itemInSession);
-                    $itemServices = $this->shopRepository->getProductServices($this->catalog, $itemInSession);
-                    if ($item['id'] == $itemServices['itemId']) {
-                        $items[] = [...$item];
-                        foreach ($items as $oneItemFromArray) {
-                            if ($oneItemFromArray['id'] === $itemServices['itemId']) {
-                                if (!empty($sessionItem['warranty'])) {
-                                    $oneItemFromArray = [...$oneItemFromArray, 'warrantyPeriod' => $itemServices['warranty'], 'warrantyCost' => $itemServices['warrantyCost']];
-                                }
-                                if (!empty($sessionItem['delivery'])) {
-                                    $oneItemFromArray = [...$oneItemFromArray, 'deliveryPeriod' => $itemServices['delivery'], 'deliveryCost' => $itemServices['deliveryCost']];
-                                }
-                                if (!empty($sessionItem['setUp'])) {
-                                    $oneItemFromArray = [...$oneItemFromArray, 'setupCost' => $itemServices['setupCost']];
-                                }
-                                $itemsWithChosenServices[] = $oneItemFromArray;
-                            }    
-                        }   
-                    }
-                }
-            }            
+        if ($product['id'] != $productServices['itemId']) {
+            return;
         }
-        return $itemsWithChosenServices; // all session data = item + chosen services (for next displaying)
+
+        $totalPrice = $product['price'];
+
+        if (!empty($sessionProduct['warranty'])) {
+            $totalPrice += $productServices['warrantyCost'];
+            $product = [...$product, 'warrantyPeriod' => $productServices['warranty'], 'warrantyCost' => $productServices['warrantyCost'], 'totalPrice' => $totalPrice];
+        }
+        if (!empty($sessionProduct['delivery'])) {
+            $totalPrice += $productServices['deliveryCost'];
+            $product = [...$product, 'deliveryPeriod' => $productServices['delivery'], 'deliveryCost' => $productServices['deliveryCost'], 'totalPrice' => $totalPrice];
+        }
+        if (!empty($sessionProduct['setUp'])) {
+            $totalPrice += $productServices['setupCost'];
+            $product = [...$product, 'setupCost' => $productServices['setupCost'], 'totalPrice' => $totalPrice];
+        }
+
+        return $product;
+    }
+
+    public function getProductsFromSession()
+    {
+        $productsWithChosenServices = [];
+
+        if (!$this->shopService->issetSession()) {
+            return;
+        }
+
+        $session = $this->shopService->getSession();
+        foreach ($session as $sessionProduct) {
+            if (!$sessionProduct) {
+                return;
+            }
+
+            $productIdInSession = $sessionProduct['itemId'];
+            $product = $this->shopRepository->getOneProductById($productIdInSession);
+            $productsServices = $this->shopRepository->getOneProductServices($productIdInSession);
+            $productWithServices = $this->createArrayWithSelectedServices($product, $productsServices, $sessionProduct);
+            $productsWithChosenServices[] = $productWithServices;
+        }
+
+        return $productsWithChosenServices;
     }
 }

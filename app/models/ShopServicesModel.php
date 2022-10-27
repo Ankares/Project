@@ -2,15 +2,15 @@
 
 namespace App\Models;
 
-use App\Models\Repositories\Abstracts\AbstractShopItemsProcessing;
+use App\Models\Repositories\Abstracts\AbstractShopData;
 
-class ShopServicesModel extends AbstractShopItemsProcessing {
-    
+class ShopServicesModel extends AbstractShopData
+{
     private $chosenServicesData = [
         'itemId' => '',
         'warranty' => '',
         'delivery' => '',
-        'setUp' => ''
+        'setUp' => '',
     ];
 
     public function setData($servicesData)
@@ -20,17 +20,18 @@ class ShopServicesModel extends AbstractShopItemsProcessing {
                 $this->chosenServicesData[$key] = $value;
             }
         }
-    } 
+    }
 
     public function getData()
     {
         $settedServicesData = [];
         $services = $this->chosenServicesData;
-        foreach($services as $key => $value) {
+        foreach ($services as $key => $value) {
             if ($value) {
                 $settedServicesData[$key] = $value;
             }
         }
+
         return $settedServicesData;
     }
 }
