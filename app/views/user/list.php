@@ -33,7 +33,7 @@
                                 <p class="me-5">Gender:</p>   
                                 <p class="me-5">Status:</p> 
                             </div>
-                            <div class="offset-2 offset-md-0 col-7 col-md-9">
+                            <div class="offset-2 offset-md-0 col-7 col-md-9">                          
                                 <input name="email" class="form-control-plaintext mb-2" disabled value="<?=htmlspecialchars($user['email'])?>">
                                 <p name="name" class="me-5"><?=htmlspecialchars($user['name'])?></p>
                                 <p name="gender" class="me-5"><?=htmlspecialchars($user['gender'])?></p>
