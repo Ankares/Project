@@ -19,20 +19,20 @@ class ShopController
     ) {
     }
 
-    public function index()
+    public function index() : void
     {
         $items = $this->shopRepository->getAllProducts();
         echo $this->twig->render('/shop/index.php.twig', ['items' => $items]);
     }
 
-    public function services($id)
+    public function services(int $id) : void
     {
         $oneItem = $this->shopRepository->getOneProductById($id);
         $itemServices = $this->shopRepository->getOneProductServices($id);
         echo $this->twig->render('/shop/additionalServices.php.twig', ['item' => $oneItem, 'itemServices' => $itemServices]);
     }
 
-    public function cart()
+    public function cart() : void
     {
         if (!isset($_SESSION['auth'])) {
             header('Location: /dashboard');

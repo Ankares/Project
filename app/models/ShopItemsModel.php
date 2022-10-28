@@ -11,7 +11,7 @@ class ShopItemsModel extends AbstractShopData
         'itemName' => '',
     ];
 
-    public function setData($itemData)
+    public function setData(array $itemData) : void
     {
         foreach ($itemData as $key => $value) {
             if (array_key_exists($key, $this->chosenItemData)) {
@@ -20,16 +20,8 @@ class ShopItemsModel extends AbstractShopData
         }
     }
 
-    public function getData()
+    public function getData() : array
     {
-        $settedItemData = [];
-        $data = $this->chosenItemData;
-        foreach ($data as $key => $value) {
-            if ($value) {
-                $settedItemData[$key] = $value;
-            }
-        }
-
-        return $settedItemData;
+        return array_filter($this->chosenItemData); 
     }
 }

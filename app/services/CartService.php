@@ -14,7 +14,7 @@ class CartService
     ) {
     }
 
-    private function createArrayWithSelectedServices($product, $productServices, $sessionProduct)
+    private function createArrayWithSelectedServices(array $product, array $productServices, array $sessionProduct)
     {
         if ($product['id'] != $productServices['itemId']) {
             return;

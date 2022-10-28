@@ -11,7 +11,7 @@ class ShopRepository implements IShopProcessing
         private readonly Catalog $calatog
     ) {
     }
-    public function getAllProducts()
+    public function getAllProducts() : array
     {
         $items = [];
         foreach ($this->calatog->itemCatalog as $item) {
@@ -21,7 +21,7 @@ class ShopRepository implements IShopProcessing
         return $items;
     }
 
-    public function getOneProductById($productId)
+    public function getOneProductById(int $productId) : array
     {
         $neededItem = null;
         foreach ($this->calatog->itemCatalog as $item) {
@@ -33,7 +33,7 @@ class ShopRepository implements IShopProcessing
         return $neededItem;
     }
 
-    public function getOneProductServices($productId)
+    public function getOneProductServices(int $productId) : array
     {
         $itemServices = null;
         foreach ($this->calatog->itemServices as $services) {

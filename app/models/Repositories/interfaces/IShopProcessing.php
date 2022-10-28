@@ -4,7 +4,7 @@ namespace App\Models\Repositories\Interfaces;
 
 interface IShopProcessing
 {
-    public function getAllProducts();
-    public function getOneProductById($productId);
-    public function getOneProductServices($productId);
+    public function getAllProducts() : array;
+    public function getOneProductById(int $productId) : array;
+    public function getOneProductServices(int $productId) : array;
 }

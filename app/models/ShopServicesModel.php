@@ -13,7 +13,7 @@ class ShopServicesModel extends AbstractShopData
         'setUp' => '',
     ];
 
-    public function setData($servicesData)
+    public function setData(array $servicesData) : void
     {
         foreach ($servicesData as $key => $value) {
             if (array_key_exists($key, $this->chosenServicesData)) {
@@ -22,16 +22,8 @@ class ShopServicesModel extends AbstractShopData
         }
     }
 
-    public function getData()
+    public function getData() : array
     {
-        $settedServicesData = [];
-        $services = $this->chosenServicesData;
-        foreach ($services as $key => $value) {
-            if ($value) {
-                $settedServicesData[$key] = $value;
-            }
-        }
-
-        return $settedServicesData;
+        return array_filter($this->chosenServicesData); 
     }
 }

@@ -17,7 +17,7 @@ class ShopService
     ) {
     }
 
-    public function issetSession()
+    public function issetSession() : bool
     {
         return isset($_SESSION[$this->sessionName]);
     }
@@ -29,13 +29,13 @@ class ShopService
         }
     }
 
-    private function setItemAndServicesData($post)
+    private function setItemAndServicesData(array $post) : void
     {
         $this->itemModel->setData($post);
         $this->servicesModel->setData($post);
     }
 
-    private function getItemAndServicesData()
+    private function getItemAndServicesData() : array
     {
         $product = $this->itemModel->getData();
         $services = $this->servicesModel->getData();
@@ -48,13 +48,9 @@ class ShopService
         }
     }
 
-    public function addItemToSession($post)
+    public function addItemToSession(array $post) : void
     {
         $itemExist = false;
-
-        if (!$post) {
-            return;
-        }
 
         $this->setItemAndServicesData($post);
         $itemData = $this->getItemAndServicesData();
@@ -69,6 +65,7 @@ class ShopService
         foreach ($_SESSION[$this->sessionName] as $product) {
             if ($product && $product['itemId'] == $post['itemId']) {
                 $itemExist = true;
+                break;
             }
         }
 

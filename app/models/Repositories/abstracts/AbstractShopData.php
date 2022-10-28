@@ -4,6 +4,6 @@ namespace App\Models\Repositories\Abstracts;
 
 abstract class AbstractShopData
 {
-    abstract public function setData($data);
-    abstract public function getData();
+    abstract public function setData(array $data) : void;
+    abstract public function getData() : array;
 }
