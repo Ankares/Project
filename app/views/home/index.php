@@ -8,18 +8,16 @@
     <title>Home page</title>
 </head>
 <body>
-    <?php if(isset($_SESSION['auth'])):?>
+    <?php if(isset($_SESSION['auth']) || isset($_COOKIE['token'])):?>
         <div class="container text-center mt-5">
             <h1 class="display-3 mb-3">Welcome</h1>
-            <a class="link-primary me-3 fs-3" href="/user">Add user</a>
-            <a class="link-primary me-3 fs-3" href="/user/list">Users list</a>
             <a class="link-primary me-3 fs-3" href="/dashboard">Dashboard</a> 
+            <a class="link-primary me-3 fs-3" href="/shop">Shop</a> 
+            <a class="link-primary me-3 fs-3" href="/shop/cart">Shopping cart</a> 
         </div>
     <?php else :?>
         <div class="container text-center mt-5">
             <h1 class="display-3 mb-3">Welcome</h1>
-            <a class="link-primary me-3 fs-3" href="/user">Add user</a>
-            <a class="link-primary me-3 fs-3" href="/user/list">Users list</a>
             <a class="link-primary me-3 fs-3" href="/login">Login</a> 
             <a class="link-primary me-3 fs-3" href="/login/registration">Registration</a> 
         </div>

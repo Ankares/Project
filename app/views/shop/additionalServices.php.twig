@@ -1,0 +1,56 @@
+{% extends '/layout/layout.html.twig' %}
+{% block title %}
+    Additional services
+{% endblock %}
+{% block body %}
+    
+    <div class="container">
+        <h2 class="mt-5 mb-4 text-center">Additional services for {{item['item']|escape}}</h2>
+        <div class="d-flex justify-content-center">
+            <img src="/public/shopItems/{{item['image']|escape}}" class="img-fluid w-25" alt="{{item['image']|escape}}">
+        </div>
+            <div class="list-group-item offset-md-1 offset-0 col-md-10 col-12 mb-4 mt-3 fs-5 p-4">
+                <a href="/shop" class="btn btn-outline-primary col-md-2 col-4 mb-4">Return</a> 
+                <form action="/shop/cart" method="POST"> 
+                
+                    {% if itemServices['warranty'] %}
+                        <h3>Warranty</h3>
+                        <div class="mx-4">
+                            <p class="mb-2">Period of warranty: {{itemServices['warranty']|escape}}</p>
+                            <p class="mb-2">Warranty Cost: {{itemServices['warrantyCost']|escape}} BYN</p> 
+                            <input type="checkbox" name="warranty" class="form-check-input"> Include warranty</input>
+                        </div>
+                        <hr>
+                    {% endif %}
+
+                    {% if itemServices['delivery'] %}
+                        <h3>Delivery</h3>
+                        <div class="mx-4">
+                            <p class="mb-2">Period of delivery: {{itemServices['delivery']|escape}}</p>
+                            <p class="mb-2">Delivery Cost: {{itemServices['deliveryCost']|escape}} BYN</p> 
+                            <input type="checkbox" name="delivery" class="form-check-input"> Include delivery</input>
+                        </div>
+                        <hr>
+                    {% endif %}
+                    
+                    {% if itemServices['setupCost'] %}
+                        <h3>Set up</h3>
+                        <div class="mx-4">
+                            <p class="mb-2">Set up Cost: {{itemServices['setupCost']|escape}} BYN</p> 
+                            <input type="checkbox" name="setUp" class="form-check-input"> Include set up</input>
+                        </div>
+                        <hr>
+                    {% endif %}
+                    
+                    <input type="hidden" name="itemId" value="{{item['id']|escape}}"></input>
+                    <input type="hidden" name="itemName" value="{{item['item']|escape}}"></input>
+                    <button type="submit" class="btn btn-primary mt-5 mb-3 p-2 col-md-4 col-8">Add to cart</button>
+                </form>
+            </div>
+    </div>
+   
+{% endblock %}
+
+{%  block js %}
+    <script src="/app/js/script.js"></script>
+{% endblock %}

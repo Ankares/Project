@@ -1,0 +1,58 @@
+{% extends '/layout/layout.html.twig' %}
+{% block title %}
+    Shopping cart
+{% endblock %}
+{% block body %}
+
+    <a href="/home" class="btn btn-outline-primary offset-md-1 offset-0 mt-4 me-3">Home</a> 
+    <a href="/shop" class="btn btn-outline-primary mt-4">Shop</a> 
+    <div class="container">
+        {% if items %}
+            <h2 class="mt-5 mb-4 text-center">Shopping cart</h2>
+            <div class="list-group-item col-10 offset-1 mb-4 mt-3 fs-5 p-4">
+                {% for item in items %}
+                    {% for sessionItem in session %}
+                        {% if item['id'] == sessionItem['itemId'] %}
+                            <h4>{{item['item']}}</h4>
+                            <div class="mx-4">
+                                <img src="/public/shopItems/{{item['image']|escape}}" class="img-fluid w-25 mb-2 mt-1" alt="{{item['image']|escape}}">
+
+                                {% if item['warrantyPeriod'] %}
+                                    <h5 class="mt-2">Warranty:</h5> 
+                                    <p class="mt-2">{{item['warrantyPeriod']}}, cost: {{item['warrantyCost']}} BYN</p>   
+                                {% endif %}
+
+                                {% if item['deliveryPeriod'] %}
+                                    <h5 class="mt-2">Delivery:</h5> 
+                                    <p class="mt-2">{{item['deliveryPeriod']|date('Y-m-d')}}, cost: {{item['deliveryCost']}} BYN</p>   
+                                {% endif %}
+
+                                {% if item['setupCost'] %}
+                                    <h5 class="mt-2">Set up:</h5> 
+                                    <p class="mt-2">cost: {{item['setupCost']}} BYN</p>   
+                                {% endif %}
+
+                                <p class="mt-4">
+                                    {% if item['totalPrice'] %}
+                                        Total Price: {{item['totalPrice']|escape}} BYN
+                                    {% else %}
+                                        Total Price: {{item['price']|escape}} BYN
+                                    {% endif %}
+                                </p>
+
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    <hr>
+                {% endfor %}
+            </div>
+        {% else %}
+            <h2 class="mt-5 mb-4 text-center">There is no items in your cart</h2>
+        {% endif %}
+    </div>
+   
+{% endblock %}
+
+{%  block js %}
+    <script src="/app/js/script.js"></script>
+{% endblock %}

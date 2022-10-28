@@ -1,0 +1,32 @@
+{% extends '/layout/layout.html.twig' %}
+{% block title %}
+    Shop list
+{% endblock %}
+{% block body %}
+    
+    <a href="/home" class="btn btn-outline-primary offset-1 mt-4 me-3">Home</a> 
+    <a href="/shop/cart" class="btn btn-outline-primary mt-4">Shopping cart</a>
+   
+    <div class="container">
+        <h2 class="mb-5 fs-1 text-center">Shop</h2>
+        <div class="row">
+            {% for item in items %}
+                <div class="card col-lg-3 offset-lg-1 col-md-5 offset-md-1 col-10 offset-1 mb-5 p-2 position-relative">
+                    <img src="public/shopItems/{{item['image']|escape}}" class="card-img-top" alt="{{item['image']|escape}}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{item['item']|escape}}</h5>
+                        <p class="card-text">Manufacturer: {{item['manufacturer']|escape}}</p>
+                        <p class="card-text">Year: {{item['created']|escape}}</p>
+                        <p class="card-text mb-5">Price: {{item['price']|escape}} BYN</p>
+                        <a href="/shop/services/{{item['id']|escape}}" class="btn btn-outline-primary col-12 position-absolute bottom-0 start-0 rounded-0 rounded-bottom">Add</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+   
+{% endblock %}
+
+{%  block js %}
+    <script src="/app/js/script.js"></script>
+{% endblock %}
